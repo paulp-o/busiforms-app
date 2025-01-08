@@ -1,0 +1,39 @@
+{
+  "name": "poll_questions",
+  "strict": false,
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "questions": {
+        "type": "array",
+        "additionalProperties": false,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "format": {
+              "type": "string",
+              "additionalProperties": false,
+              "enum": ["input", "choice", "multiple-choice"]
+            },
+            "text": {
+              "type": "string",
+              "additionalProperties": false
+            },
+            "options": {
+              "type": "array",
+              "additionalProperties": false,
+              "items": {
+                "type": "string",
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["format", "text"]
+        }
+      }
+    },
+    "required": ["questions"]
+  }
+}
