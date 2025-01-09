@@ -13,9 +13,9 @@ interface HeaderProps {
 export default function Header({ userEmail }: HeaderProps) {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
+  const { logout } = useAuth();
 
   const handleSignOut = async () => {
-    const { logout } = useAuth();
     await logout();
     router.push("/auth/login");
   };

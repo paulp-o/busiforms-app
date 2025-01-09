@@ -28,7 +28,7 @@ export default function DashboardPage() {
         <div className="px-4 py-6 sm:px-0">
           <h1 className="text-2xl font-semibold text-gray-900">대시보드</h1>
           <div className="mt-4">
-            <p className="text-gray-600">환영합니다, {user.email}님!</p>
+            <p className="text-gray-600">환영합니다, {user.username}님!</p>
           </div>
         </div>
       </div>
