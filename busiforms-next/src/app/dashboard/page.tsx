@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/layout/Header/Header";
 import { useAuth } from "@/hooks/useAuth";
-import { Flex, VStack, Box, Heading, Grid, GridItem, Spinner } from "@chakra-ui/react";
+import { Flex, VStack, Box, Heading, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -68,10 +68,34 @@ const Dashboard: React.FC<{
     //  left aside
     <Flex height="100vh">
       {/* 좌측 패널 */}
-      <Box w="300px" bg="gray.800" color="white" p={5} display="flex" flexDirection="column" justifyContent="space-between">
-        <VStack align="center" gap={4}>
-          {/* 프로필 이미지 및 정보 */}
-          {user.username} 님
+      <Box
+        w="300px"
+        bg="gray.800"
+        color="white"
+        p={6}
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        borderRight="1px"
+        borderColor="gray.700"
+      >
+        <VStack align="stretch" gap={6}>
+          <VStack align="center" gap={3}>
+            <Box w="80px" h="80px" borderRadius="full" bg="blue.500" display="flex" alignItems="center" justifyContent="center" fontSize="2xl">
+              {user.username[0].toUpperCase()}
+            </Box>
+            <Text fontSize="lg" fontWeight="bold">
+              {user.username} 님
+            </Text>
+          </VStack>
+          <VStack align="stretch" gap={2}>
+            <Box as="button" onClick={() => router.push("/surveys/create")} _hover={{ bg: "gray.700" }} p={2} borderRadius="md" textAlign="left">
+              설문지 만들기
+            </Box>
+            <Box as="button" onClick={() => router.push("/dashboard")} _hover={{ bg: "gray.700" }} p={2} borderRadius="md" textAlign="left">
+              나의 설문지
+            </Box>
+          </VStack>
         </VStack>
       </Box>
       {/* 메인 콘텐츠 */}
@@ -99,6 +123,8 @@ const Dashboard: React.FC<{
               justifyContent="center"
               cursor="pointer"
               onClick={() => router.push("/surveys/create")}
+              _hover={{ bg: "blue.600" }}
+              transition="background-color 0.2s"
             >
               <Heading size="md" mb={2}>
                 새 설문지 만들기
@@ -107,7 +133,18 @@ const Dashboard: React.FC<{
           </GridItem>
           {surveyList.map((survey) => (
             <GridItem key={survey.id}>
-              <Box bg="white" p={6} rounded="lg" shadow="md" display="flex" height={"100%"} flexDirection="column" justifyContent="space-between">
+              <Box
+                bg="white"
+                p={6}
+                rounded="lg"
+                shadow="md"
+                display="flex"
+                height={"100%"}
+                flexDirection="column"
+                justifyContent="space-between"
+                _hover={{ shadow: "lg" }}
+                transition="box-shadow 0.2s"
+              >
                 <Heading size="md" mb={2}>
                   {survey.title}
                 </Heading>
@@ -130,6 +167,8 @@ const Dashboard: React.FC<{
                       rounded="md"
                       fontSize="xs"
                       onClick={() => router.push(`/surveys/${survey.id}`)}
+                      _hover={{ bg: "blue.600" }}
+                      transition="background-color 0.2s"
                     >
                       설문조사 참가 링크
                     </Box>
@@ -141,6 +180,8 @@ const Dashboard: React.FC<{
                       rounded="md"
                       fontSize="xs"
                       onClick={() => navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`)}
+                      _hover={{ bg: "gray.600" }}
+                      transition="background-color 0.2s"
                     >
                       복사하기
                     </Box>
@@ -158,6 +199,8 @@ const Dashboard: React.FC<{
                           )}`
                         )
                       }
+                      _hover={{ bg: "green.600" }}
+                      transition="background-color 0.2s"
                     >
                       설문조사 수정하기
                     </Box>
@@ -175,10 +218,26 @@ const Dashboard: React.FC<{
                           });
                         }
                       }}
+                      _hover={{ bg: "red.600" }}
+                      transition="background-color 0.2s"
                     >
                       설문조사 삭제하기
                     </Box>
                   </Grid>
+                  {/* 통계 보기 */}
+                  <Box
+                    as="button"
+                    bg="purple.500"
+                    color="white"
+                    p={1}
+                    rounded="md"
+                    fontSize="xs"
+                    onClick={() => router.push(`/surveys/stats/${survey.id}`)}
+                    _hover={{ bg: "purple.600" }}
+                    transition="background-color 0.2s"
+                  >
+                    통계 보기
+                  </Box>
                 </Flex>
               </Box>
             </GridItem>

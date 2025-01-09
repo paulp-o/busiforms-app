@@ -2,6 +2,8 @@ import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Button from "./common/Button/Button";
+import axios from "axios";
 
 // TypeScript Interfaces
 type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime";
@@ -37,7 +39,7 @@ const createValidationSchema = (questions: Question[]) => {
         schemaObject[question.id] = z.array(z.string()).min(1, "Please select at least one option");
         break;
       case "number":
-        schemaObject[question.id] = z.number({ invalid_type_error: "Please enter a valid number" }).min(1, "Number must be greater than 0");
+        schemaObject[question.id] = z.coerce.number({ invalid_type_error: "Please enter a valid number" }).min(1, "Number must be greater than 0");
         break;
       case "date":
       case "time":
@@ -60,10 +62,18 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
   } = useForm({
     resolver: zodResolver(validationSchema),
   });
+  const onSubmit = async (data: Record<string, z.ZodTypeAny>) => {
+    try {
+      const response = await axios.post("http://localhost:3001/api/responses", {
+        surveyId: survey.id,
+        answers: data,
+      });
+      console.log("Response from server:", response.data);
+    } catch (error) {
+      console.error("Error submitting data:", error);
+    }
 
-  const onSubmit = (data: Record<string, z.ZodTypeAny>) => {
     console.log("Submitted Data:", data);
-    // Handle form submission logic (e.g., save to API)
   };
 
   return (
@@ -86,7 +96,14 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
                 case "datetime":
                   return <input {...field} type="datetime-local" className="border rounded-md p-2 w-full" />;
                 case "number":
-                  return <input {...field} type="number" className="border rounded-md p-2 w-full" />;
+                  return (
+                    <input
+                      {...field}
+                      type="number"
+                      onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))}
+                      className="border rounded-md p-2 w-full"
+                    />
+                  );
                 case "radio":
                   return (
                     <div className="flex space-x-4">
@@ -148,9 +165,9 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
           {errors[question.id] && <span className="text-red-500 text-sm">{errors[question.id]?.message?.toString()}</span>}
         </div>
       ))}
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-        Submit
-      </button>
+      <Button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+        제출하기!
+      </Button>
     </form>
   );
 };

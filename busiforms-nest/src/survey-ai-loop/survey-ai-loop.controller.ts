@@ -12,4 +12,9 @@ export class SurveyAiLoopController {
   ) {
     return this.surveyAiLoopService.generatePoll(userInput, givenPoll);
   }
+
+  @Post('inferVisualizationType')
+  async inferVisualizationType(@Body('question') question: string) {
+    return this.surveyAiLoopService.inferVisualizationType(question);
+  }
 }

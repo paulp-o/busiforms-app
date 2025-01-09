@@ -136,4 +136,74 @@ export class SurveyAiLoopService {
 
     return answer;
   }
+
+  async inferVisualizationType(question: string) {
+    // OpenAI에 보낼 ChatCompletion
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const response = await openai.beta.chat.completions.parse({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: [
+            {
+              text: `
+              You are a data analyst. You are given a survey question and need to decide what type of visualization is suitable for the given question. choces are: bar_chart, pie_chart, histogram, word_cloud.
+              
+              # Output Format
+              
+              The output should be formatted as a JSON object, consisting of a single key \`visualizationType\`. Do not wrap the JSON in code blocks. Example:
+              
+              \`\`\`json
+              {
+                "visualizationType": "bar_chart"
+              }
+              \`\`\`
+              `,
+              type: 'text',
+            },
+          ],
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              text: `Question: ${question}`,
+              type: 'text',
+            },
+          ],
+        },
+      ],
+      response_format: {
+        type: 'json_schema',
+        json_schema: {
+          name: 'poll_questions',
+          strict: false,
+          schema: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              visualizationType: {
+                type: 'string',
+                additionalProperties: false,
+                enum: ['bar_chart', 'pie_chart', 'histogram', 'word_cloud'],
+              },
+            },
+          },
+        },
+      },
+      temperature: 1,
+      max_completion_tokens: 2048,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+
+    // it's already parsed
+    const answer = response.choices[0].message.parsed;
+
+    return answer;
+  }
 }
