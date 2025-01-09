@@ -1,11 +1,11 @@
-import { Controller, Get, Body } from '@nestjs/common';
+import { Controller, Body, Post } from '@nestjs/common';
 import { SurveyAiLoopService } from './survey-ai-loop.service';
 
 @Controller('api/survey-ai-loop')
 export class SurveyAiLoopController {
   constructor(private readonly surveyAiLoopService: SurveyAiLoopService) {}
 
-  @Get()
+  @Post()
   async getSurveyAiLoop(
     @Body('input') userInput?: string,
     @Body('givenPoll') givenPoll?: string,

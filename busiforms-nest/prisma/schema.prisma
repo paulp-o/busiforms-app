@@ -35,7 +35,7 @@ model Question {
   text      String
   questionType      QuestionType
   options   String[] // 선택지
-  visualizationType VisualizationType
+  visualizationType VisualizationType?
   survey    Survey   @relation(fields: [surveyId], references: [id])
   surveyId  String
   createdAt DateTime @default(now())
