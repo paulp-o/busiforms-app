@@ -1,11 +1,10 @@
 import Input from "@/components/common/Input/Input";
 import { Button } from "@/components/ui/button";
-import { Card, Icon, Stack, Spinner, Fieldset } from "@chakra-ui/react";
+import { Card, Icon, Stack, Fieldset } from "@chakra-ui/react";
 import { CheckboxGroup } from "@chakra-ui/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SendHorizontal } from "lucide-react";
 import React, { useState } from "react";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 interface Message {
   content: string;
