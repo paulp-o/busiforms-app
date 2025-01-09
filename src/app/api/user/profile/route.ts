@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
-import { prisma } from "@/prisma";
 import { NextResponse } from "next/server";
+import prisma from "../../../../../prisma/context";
 
 export async function GET() {
   // NextAuth 세션 가져오기
@@ -35,7 +35,7 @@ export async function GET() {
 
   // write in the server side log that the user was found
 
-  console.log("User found");
+  // console.log("User found");
 
   // if user exists, return the user
   return NextResponse.json(user);

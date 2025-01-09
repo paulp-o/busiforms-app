@@ -1,0 +1,31 @@
+{
+  "surveyData": {
+    "title": "개강총회 설문조사",
+    "description": "개강총회에 대한 설문조사입니다. 아래의 질문에 답변해주세요.",
+    "theme": "{primaryColor: '#FF0000', secondaryColor: '#00FF00'}",
+    "questions": [
+      {
+        "type": "input",
+        "text": "학번을 입력해주세요"
+      },
+      {
+        "type": "input",
+        "text": "이름을 입력해주세요"
+      },
+      {
+        "type": "input",
+        "text": "전화번호를 입력해주세요"
+      },
+      {
+        "type": "choice",
+        "text": "성별을 선택해주세요",
+        "options": ["남성", "여성", "기타"]
+      },
+      {
+        "type": "multiple-choice",
+        "text": "지난 개강총회에 대한 피드백을 선택해주세요",
+        "options": ["강연 내용이 유익했다", "진행 시간이 적절했다", "조직이 잘 되어 있었다", "장소가 편리했다", "네트워킹 기회가 좋았다"]
+      }
+    ]
+  }
+}

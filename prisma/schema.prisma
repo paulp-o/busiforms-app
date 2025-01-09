@@ -12,26 +12,23 @@ model User {
   email     String    @unique
   name      String?
   createdAt DateTime  @default(now())
-  surveys   Survey[]
 }
 
 model Survey {
   id          Int       @id @default(autoincrement())
   title       String
   description String?
-  theme       String     // Theme 데이터를 JSON 문자열로 저장
+  theme       String     // color code
   questions   Question[]
   createdAt   DateTime   @default(now())
   responses   Response[]
-  user        User       @relation(fields: [userId], references: [id])
-  userId      Int
 }
 
 model Question {
   id        Int      @id @default(autoincrement())
   text      String   // 질문 내용
   type      String   // "text", "multiple-choice", "checkbox"
-  options   String   // 다중 선택 옵션을 JSON 문자열로 저장
+  options   String?   // 다중 선택 옵션을 JSON 문자열로 저장
   survey    Survey   @relation(fields: [surveyId], references: [id])
   surveyId  Int
 }
