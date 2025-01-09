@@ -91,13 +91,12 @@ const ChatbotChat: React.FC<{
 
       <Card.Root>
         <div className="overflow-y-auto h-full" style={{ maxHeight: "calc(70vh - 200px)" }}>
-          <Card.Body>
+          <Card.Body p={"3"}>
             <ChatBubbleList messages={messages} />
           </Card.Body>
         </div>
       </Card.Root>
-
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack direction="row" justifyContent="space-between" alignItems="center" pt={"1"}>
         <Input
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
