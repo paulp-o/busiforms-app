@@ -1,8 +1,11 @@
 import Input from "@/components/common/Input/Input";
 import { Button } from "@/components/ui/button";
-import { Card, Icon, Stack, Spinner } from "@chakra-ui/react";
+import { Card, Icon, Stack, Spinner, Fieldset } from "@chakra-ui/react";
+import { CheckboxGroup } from "@chakra-ui/react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { SendHorizontal } from "lucide-react";
 import React, { useState } from "react";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 interface Message {
   content: string;
@@ -17,24 +20,32 @@ interface SurveyResponse {
   }>;
 }
 
-const ChatbotChat: React.FC<{ onSurveyUpdate: (data: SurveyResponse) => void }> = ({ onSurveyUpdate }) => {
+const ChatbotChat: React.FC<{
+  givenPoll?: SurveyResponse;
+  onSurveyUpdate: (data: SurveyResponse) => void;
+  onLoadingChange?: (loading: boolean) => void;
+}> = ({ givenPoll, onSurveyUpdate, onLoadingChange }) => {
   const [messages, setMessages] = useState<Message[]>([{ content: "설문지 작성을 도와드리겠습니다. 어떤 설문지를 만들고 싶으신가요?", isBot: true }]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentSurvey, setCurrentSurvey] = useState<SurveyResponse | null>(null);
+  const [currentSurvey, setCurrentSurvey] = useState<SurveyResponse | null>(givenPoll || null);
+  const [selectedFields, setSelectedFields] = useState<string[]>([]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
     setIsLoading(true);
-    setMessages((prev) => [...prev, { content: inputMessage, isBot: false }]);
+    onLoadingChange?.(true);
+    const fieldsMessage = selectedFields.length > 0 ? `(필수 정보: ${selectedFields.join(", ")})` : "";
+    const fullMessage = `${inputMessage} ${fieldsMessage}`.trim();
+    setMessages((prev) => [...prev, { content: fullMessage, isBot: false }]);
 
     try {
       const response = await fetch("http://localhost:3001/api/survey-ai-loop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          input: inputMessage,
+          input: fullMessage,
           givenPoll: currentSurvey ? JSON.stringify(currentSurvey.questions) : "",
         }),
       });
@@ -53,16 +64,34 @@ const ChatbotChat: React.FC<{ onSurveyUpdate: (data: SurveyResponse) => void }> 
       console.log(error);
     } finally {
       setIsLoading(false);
+      onLoadingChange?.(false);
       setInputMessage("");
     }
   };
 
   return (
     <div>
-      <p>챗봇에게 설문지 수정을 요청해 보세요.</p>
+      <p className="text-sm">챗봇에게 설문지 수정을 요청해 보세요.</p>
+
+      <Fieldset.Root p="2" m="2">
+        <CheckboxGroup onValueChange={setSelectedFields} name="requiredFields">
+          <Fieldset.Legend fontSize="sm" mb="2">
+            답변자 필수 정보 선택
+          </Fieldset.Legend>
+          <Fieldset.Content>
+            <Stack direction="row" flexWrap="wrap" gap={2}>
+              {["성별", "이름", "나이", "전화번호"].map((field) => (
+                <Stack align="left" flex="1 1 45%" key={field}>
+                  <Checkbox value={field}>{field}</Checkbox>
+                </Stack>
+              ))}
+            </Stack>
+          </Fieldset.Content>
+        </CheckboxGroup>
+      </Fieldset.Root>
 
       <Card.Root>
-        <div className="overflow-y-auto h-full">
+        <div className="overflow-y-auto h-full" style={{ maxHeight: "calc(70vh - 200px)" }}>
           <Card.Body>
             <ChatBubbleList messages={messages} />
           </Card.Body>
@@ -77,15 +106,15 @@ const ChatbotChat: React.FC<{ onSurveyUpdate: (data: SurveyResponse) => void }> 
           onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           disabled={isLoading}
         />
-        <Button variant="solid" onClick={handleSendMessage} disabled={isLoading}>
+        <Button variant="solid" onClick={handleSendMessage} disabled={isLoading} size="sm">
           {isLoading ? (
-            <Spinner size="sm" />
+            <div> {/* <LoadingSpinner /> */}</div>
           ) : (
-            <div>
-              <Icon>
+            <div className="flex items-center">
+              <Icon boxSize={4}>
                 <SendHorizontal />
               </Icon>
-              Send
+              <span className="ml-1 text-sm">Send</span>
             </div>
           )}
         </Button>
@@ -99,7 +128,7 @@ const ChatBubbleList: React.FC<{ messages: Message[] }> = ({ messages }) => {
     <div>
       {messages.map((message, index) => (
         <div key={index} className={`chat ${message.isBot ? "chat-start" : "chat-end"}`}>
-          <div className={`chat-bubble ${message.isBot ? "chat-bubble-primary" : "chat-bubble-success"}`}>{message.content}</div>
+          <div className={`chat-bubble ${message.isBot ? "chat-bubble-primary" : "chat-bubble-success"} text-sm`}>{message.content}</div>
         </div>
       ))}
     </div>

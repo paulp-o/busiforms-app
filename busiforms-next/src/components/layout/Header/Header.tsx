@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { getCookie } from "cookies-next";
 
-interface HeaderProps {
-  userEmail?: string | null;
-}
-
-export default function Header({ userEmail }: HeaderProps) {
+export default function Header() {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user, loading } = useAuth();
+
+  // try to get user email from cookie
+  const userEmail = getCookie("email");
 
   const handleSignOut = async () => {
     await logout();
@@ -42,8 +42,8 @@ export default function Header({ userEmail }: HeaderProps) {
                   <Link href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setShowDropdown(false)}>
                     대시보드
                   </Link>
-                  <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setShowDropdown(false)}>
-                    내 프로필
+                  <Link href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setShowDropdown(false)}>
+                    나의 설문지
                   </Link>
                   <button onClick={handleSignOut} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                     로그아웃

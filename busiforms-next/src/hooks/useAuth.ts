@@ -48,7 +48,7 @@ export function useAuth() {
         return { success: true };
       }
       return { success: false, error: "Invalid credentials" };
-    } catch (error) {
+    } catch {
       return { success: false, error: "Login failed" };
     }
   };
@@ -69,7 +69,7 @@ export function useAuth() {
         return { success: true };
       }
       return { success: false, error: "Invalid credentials" };
-    } catch (error) {
+    } catch {
       return { success: false, error: "Login failed" };
     }
   };

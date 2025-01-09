@@ -48,6 +48,11 @@ export class SurveyAiLoopService {
               \`\`\`
               
               ${givenPoll ? `Earlier Poll: ${givenPoll}` : ''}
+
+              ### Important
+              - Try to preserve the original survey's content if given.
+              - If the given survey has ids, you should strictly preserve them. However, you shouldn't add ids to newly generated questions.
+
               `,
               type: 'text',
             },
@@ -105,6 +110,10 @@ export class SurveyAiLoopService {
                         type: 'string',
                         additionalProperties: false,
                       },
+                    },
+                    id: {
+                      type: 'string',
+                      additionalProperties: false,
                     },
                   },
                   required: ['questionType', 'text'],
