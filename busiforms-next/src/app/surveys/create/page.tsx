@@ -13,8 +13,15 @@ interface SurveyResponse {
     text: string;
     questionType: string;
     options?: string[];
+    visualizationType?: string;
   }[];
 }
+
+const inferVisualizationType = async () => {
+  // Implement your logic to infer the visualization type based on the question
+  // For now, let's return a placeholder value
+  return "bar"; // Example visualization type
+};
 
 const CreateSurveyPage: React.FC = () => {
   const [surveyData, setSurveyData] = useState<Survey | null>(null);
@@ -104,7 +111,7 @@ const CreateSurveyPage: React.FC = () => {
             ...surveyData,
           });
 
-      if (response.status !== 200) {
+      if (response.status !== 200 && response.status !== 201) {
         throw new Error("Failed to create survey");
       }
       toaster.create({
@@ -117,8 +124,6 @@ const CreateSurveyPage: React.FC = () => {
       setTimeout(() => {
         router.push("/dashboard");
       }, 1000);
-
-      // Optional: Redirect to surveys list or clear form
     } catch (error) {
       toaster.create({
         title: isEdit ? "설문 수정 실패" : "설문 생성 실패",
@@ -195,6 +200,7 @@ const CreateSurveyPage: React.FC = () => {
                     questions: data.questions.map((question) => ({
                       ...question,
                       options: question.options || [],
+                      visualizationType: question.visualizationType || "",
                     })),
                   };
                   setSurveyData(formattedData);
@@ -224,12 +230,13 @@ const CreateSurveyPage: React.FC = () => {
 
 interface Survey {
   questions: {
+    visualizationType: string;
     text: string;
     questionType: string;
     options: string[];
   }[];
 }
-import { FaCheckCircle, FaList, FaTextHeight, FaCalendarAlt, FaClock, FaHashtag } from "react-icons/fa";
+import { FaCheckCircle, FaList, FaTextHeight, FaCalendarAlt, FaClock, FaHashtag, FaChartBar, FaChartPie, FaChartLine, FaTimes } from "react-icons/fa";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const PreviewSurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
@@ -242,18 +249,57 @@ const PreviewSurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
     date: { label: "날짜", icon: <FaCalendarAlt /> },
     time: { label: "시간", icon: <FaClock /> },
     datetime: { label: "날짜 및 시간", icon: <FaCalendarAlt /> },
+    long_text: { label: "긴 텍스트", icon: <FaTextHeight /> },
+  };
+
+  const visualizationTypeMap: { [key: string]: { label: string; icon: JSX.Element } } = {
+    bar_chart: { label: "막대 그래프", icon: <FaChartBar /> },
+    pie_chart: { label: "원형 그래프", icon: <FaChartPie /> },
+    line_chart: { label: "선형 그래프", icon: <FaChartLine /> },
+    histogram: { label: "히스토그램", icon: <FaChartBar /> },
+    scatter_plot: { label: "산점도", icon: <FaChartLine /> },
+    box_plot: { label: "박스 플롯", icon: <FaChartBar /> },
+    text_only: { label: "텍스트만", icon: <FaTextHeight /> },
+    word_cloud: { label: "키워드", icon: <FaHashtag /> },
+  };
+
+  const getVisualizationLabel = (type: string | null) => {
+    if (type === null) return null;
+    if (type === "none") return { icon: <FaTimes />, label: "시각화 불가" };
+    return visualizationTypeMap[type] || { icon: <FaChartBar />, label: type };
   };
 
   return (
     <div className="space-y-4 max-w-3xl mx-auto overflow-auto">
-      {survey.questions.map((question: { text: string; questionType: string; options: string[] }, index: number) => (
+      {survey.questions.map((question, index) => (
         <div key={index} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
           <div className="flex items-start justify-between mb-2">
             <h3 className="text-md font-semibold text-gray-800">{question.text}</h3>
-            <span className="flex items-center px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
-              {questionTypeMap[question.questionType]?.icon}
-              <span className="ml-1">{questionTypeMap[question.questionType]?.label || question.questionType}</span>
-            </span>
+            <div className="flex items-center space-x-2">
+              {/* Question Type Badge */}
+              <span className="flex items-center px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
+                {questionTypeMap[question.questionType]?.icon}
+                <span className="ml-1">{questionTypeMap[question.questionType]?.label || question.questionType}</span>
+              </span>
+
+              {/* Visualization Type Badge */}
+              {question.visualizationType === "" ? (
+                <span className="flex items-center gap-2 px-2 py-1 bg-gray-100 text-gray-500 rounded-full text-xs">
+                  <span className="loading loading-spinner loading-xs"></span>
+                  추론 중...
+                </span>
+              ) : question.visualizationType === "none" ? (
+                <span className="flex items-center px-2 py-1 bg-red-50 text-red-600 rounded-full text-xs font-medium">
+                  <FaTimes />
+                  <span className="ml-1">시각화 불가</span>
+                </span>
+              ) : (
+                <span className="flex items-center px-2 py-1 bg-green-50 text-green-600 rounded-full text-xs font-medium">
+                  {getVisualizationLabel(question.visualizationType)?.icon}
+                  <span className="ml-1">{getVisualizationLabel(question.visualizationType)?.label}</span>
+                </span>
+              )}
+            </div>
           </div>
 
           {question.options.length > 0 && (

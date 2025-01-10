@@ -5,8 +5,10 @@ import * as z from "zod";
 import Button from "./common/Button/Button";
 import axios from "axios";
 
+import { useRouter } from "next/navigation";
+
 // TypeScript Interfaces
-type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime";
+type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime" | "long_text";
 
 interface Question {
   id: string;
@@ -53,6 +55,7 @@ const createValidationSchema = (questions: Question[]) => {
 };
 
 const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
+  const router = useRouter();
   const validationSchema = createValidationSchema(survey.questions);
 
   const {
@@ -69,11 +72,12 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
         answers: data,
       });
       console.log("Response from server:", response.data);
+      // Redirect to completion page
+      router.push(`/surveys/${survey.id}/complete`);
     } catch (error) {
       console.error("Error submitting data:", error);
+      // You might want to show an error message to the user here
     }
-
-    console.log("Submitted Data:", data);
   };
 
   return (
@@ -89,6 +93,8 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
               switch (question.questionType) {
                 case "text":
                   return <input {...field} type="text" className="border rounded-md p-2 w-full" />;
+                case "long_text":
+                  return <textarea {...field} className="border rounded-md p-2 w-full" />;
                 case "date":
                   return <input {...field} type="date" className="border rounded-md p-2 w-full" />;
                 case "time":
@@ -165,7 +171,7 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
           {errors[question.id] && <span className="text-red-500 text-sm">{errors[question.id]?.message?.toString()}</span>}
         </div>
       ))}
-      <Button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+      <Button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onSubmit={handleSubmit(onSubmit)}>
         제출하기!
       </Button>
     </form>

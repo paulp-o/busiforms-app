@@ -58,6 +58,7 @@ enum VisualizationType {
   pie_chart
   histogram
   word_cloud
+  none
 }
 
 model Response {

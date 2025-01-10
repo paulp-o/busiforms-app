@@ -161,6 +161,7 @@ export class SurveyAiLoopService {
                 "visualizationType": "bar_chart"
               }
               \`\`\`
+              - You MUST generate 'none' if no visualization is suitable.
               `,
               type: 'text',
             },
@@ -188,7 +189,13 @@ export class SurveyAiLoopService {
               visualizationType: {
                 type: 'string',
                 additionalProperties: false,
-                enum: ['bar_chart', 'pie_chart', 'histogram', 'word_cloud'],
+                enum: [
+                  'bar_chart',
+                  'pie_chart',
+                  'histogram',
+                  'word_cloud',
+                  'none',
+                ],
               },
             },
           },

@@ -16,6 +16,7 @@ interface SurveyResponse {
     questionType: string;
     text: string;
     options?: string[];
+    visualizationType?: string;
   }>;
 }
 
@@ -29,6 +30,21 @@ const ChatbotChat: React.FC<{
   const [isLoading, setIsLoading] = useState(false);
   const [currentSurvey, setCurrentSurvey] = useState<SurveyResponse | null>(givenPoll || null);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
+
+  const inferVisualizationType = async (question: { questionType: string; text: string; options?: string[] }) => {
+    try {
+      const response = await fetch("http://localhost:3001/api/survey-ai-loop/inferVisualizationType", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: JSON.stringify(question) }),
+      });
+      const data = await response.json();
+      return data.visualizationType;
+    } catch (error) {
+      console.error("Error inferring visualization type:", error);
+      return null;
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
@@ -50,8 +66,36 @@ const ChatbotChat: React.FC<{
       });
 
       const data = await response.json();
-      setCurrentSurvey(data);
-      onSurveyUpdate(data);
+      // Initialize with undefined visualization types
+      const initialData = {
+        ...data,
+        questions: data.questions.map((q: { questionType: string; text: string; options?: string[] }) => ({
+          ...q,
+          visualizationType: undefined,
+        })),
+      };
+      setCurrentSurvey(initialData);
+      onSurveyUpdate(initialData);
+
+      // Stop showing the loading spinner for the entire preview
+      setIsLoading(false);
+      onLoadingChange?.(false);
+
+      // Infer visualization type for each question in the background sequentially with a delay
+      for (const [index, question] of data.questions.entries()) {
+        const visualizationType = await inferVisualizationType(question);
+        if (visualizationType !== null) {
+          setCurrentSurvey((prevSurvey: SurveyResponse | null) => {
+            if (!prevSurvey) return null;
+            const updatedQuestions = [...prevSurvey.questions];
+            updatedQuestions[index].visualizationType = visualizationType;
+            const updatedSurvey: SurveyResponse = { ...prevSurvey, questions: updatedQuestions };
+            onSurveyUpdate(updatedSurvey);
+            return updatedSurvey;
+          });
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
+      }
 
       // Customize message based on whether it's a modification or new survey
       const responseMessage = currentSurvey
@@ -62,8 +106,6 @@ const ChatbotChat: React.FC<{
       setMessages((prev) => [...prev, { content: "죄송합니다. 오류가 발생했습니다.", isBot: true }]);
       console.log(error);
     } finally {
-      setIsLoading(false);
-      onLoadingChange?.(false);
       setInputMessage("");
     }
   };
