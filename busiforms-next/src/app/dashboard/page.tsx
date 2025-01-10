@@ -6,7 +6,8 @@ import axios from "axios";
 import Header from "@/components/layout/Header/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { Flex, VStack, Box, Heading, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
-import { Toaster } from "@/components/ui/toaster";
+
+import { Toaster, toaster } from "@/components/ui/toaster";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -193,6 +194,13 @@ const Dashboard: React.FC<{
                 height={"100%"}
                 flexDirection="column"
                 justifyContent="space-between"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`);
+                  toaster.create({
+                    title: "링크가 복사되었습니다!",
+                    duration: 4000,
+                  });
+                }}
                 _hover={{ shadow: "xl", transform: "translateY(-2px)" }}
                 transition="all 0.2s"
                 border="1px solid rgba(0,0,0,0.05)"

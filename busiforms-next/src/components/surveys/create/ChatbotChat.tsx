@@ -1,10 +1,9 @@
-import Input from "@/components/common/Input/Input";
 import { Button } from "@/components/ui/button";
-import { Card, Icon, Stack, Fieldset } from "@chakra-ui/react";
+import { Card, Icon, Stack, Fieldset, Textarea } from "@chakra-ui/react";
 import { CheckboxGroup } from "@chakra-ui/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SendHorizontal } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 interface Message {
@@ -31,6 +30,19 @@ const ChatbotChat: React.FC<{
   const [isLoading, setIsLoading] = useState(false);
   const [currentSurvey, setCurrentSurvey] = useState<SurveyResponse | null>(givenPoll || null);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
+
+  useEffect(() => {
+    const message =
+      "나는 커스텀 케이크샵을 운영하고 있어.\n원데이클래스를 열어야하는데 참여자 정보, 클래스를 알게 된 경로, 뭘 배우고 싶고 뭘 만들고 싶은지를 알고싶어.";
+    navigator.clipboard
+      .writeText(message)
+      .then(() => {
+        console.log("Message copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Failed to copy message to clipboard: ", err);
+      });
+  }, []);
 
   const inferVisualizationType = async (question: { questionType: string; text: string; options?: string[] }) => {
     try {
@@ -115,7 +127,7 @@ const ChatbotChat: React.FC<{
     <div>
       <p className="text-sm">챗봇에게 설문지 수정을 요청해 보세요.</p>
 
-      <Fieldset.Root p="2" m="2">
+      <Fieldset.Root p="2" my="3" borderRadius="md" borderColor="gray" borderWidth="1px">
         <CheckboxGroup onValueChange={setSelectedFields} name="requiredFields">
           <Fieldset.Legend fontSize="sm" mb="2">
             답변자 필수 정보 선택
@@ -124,7 +136,9 @@ const ChatbotChat: React.FC<{
             <Stack direction="row" flexWrap="wrap" gap={2}>
               {["성별", "이름", "나이", "전화번호"].map((field) => (
                 <Stack align="left" flex="1 1 45%" key={field}>
-                  <Checkbox value={field}>{field}</Checkbox>
+                  <Checkbox value={field} variant="solid">
+                    {field}
+                  </Checkbox>
                 </Stack>
               ))}
             </Stack>
@@ -139,21 +153,22 @@ const ChatbotChat: React.FC<{
           </Card.Body>
         </div>
       </Card.Root>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" pt={"1"}>
-        <Input
+      <Stack direction="row" justifyContent="space-between" alignItems="center" pt={"3"}>
+        <Textarea
+          variant="subtle"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           placeholder="Type your message here..."
           onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           disabled={isLoading}
+          style={{ overflow: "hidden", resize: "none", width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+          rows={1}
+          onInput={(e) => {
+            e.currentTarget.style.height = "auto";
+            e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+          }}
         />
-        <Button 
-          variant="solid" 
-          onClick={handleSendMessage} 
-          disabled={isLoading} 
-          size="sm"
-          className="bg-[#515151] hover:bg-[#515151]/90 text-white"
-        >
+        <Button variant="solid" onClick={handleSendMessage} disabled={isLoading} size="sm" className="bg-[#515151] hover:bg-[#515151]/90 text-white">
           {isLoading ? (
             <div> {/* <LoadingSpinner /> */}</div>
           ) : (
@@ -178,22 +193,11 @@ const ChatBubbleList: React.FC<{ messages: Message[] }> = ({ messages }) => {
           {message.isBot && (
             <div className="chat-image avatar">
               <div className="w-8 h-8 rounded-full overflow-hidden">
-                <Image
-                  src="/images/chatbot.png"
-                  alt="Chatbot"
-                  width={32}
-                  height={32}
-                />
+                <Image src="/images/chatbot.png" alt="Chatbot" width={32} height={32} />
               </div>
             </div>
           )}
-          <div 
-            className={`chat-bubble text-sm font-inter ${
-              message.isBot 
-                ? "bg-[#3953D5] text-white" 
-                : "bg-[#DFE7FA] text-gray-800"
-            }`}
-          >
+          <div className={`chat-bubble text-sm font-inter ${message.isBot ? "bg-[#3953D5] text-white" : "bg-[#DFE7FA] text-gray-800"}`}>
             {message.content}
           </div>
         </div>

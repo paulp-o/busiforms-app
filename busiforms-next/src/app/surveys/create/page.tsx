@@ -136,12 +136,12 @@ const CreateSurveyPage: React.FC = () => {
   }
 
   return (
-    <div className={`relative min-h-screen pb-40 bg-white ${inter.className}`}>
+    <div className={`relative min-h-screen pb-40 bg-gray-100 ${inter.className}`}>
       <Toaster />
       <Container pt={6}>
-        <div className="bg-white p-3">
-          <Grid templateColumns="repeat(9, 1fr)" gap={4}>
-            <GridItem colSpan={2}>
+        <div className="bg-white p-3 rounded-lg">
+          <Grid templateColumns="repeat(9, 1fr)" gap={4} alignItems="center">
+            <GridItem colSpan={3}>
               <label className="block">
                 <span className="text-gray-700">설문지 제목</span>
                 <Input
@@ -155,9 +155,9 @@ const CreateSurveyPage: React.FC = () => {
                 />
               </label>
             </GridItem>
-            <GridItem>
-              <label className="block space-y-2">
-                <span className="text-gray-700 font-medium text-sm font-inter">설명</span>
+            <GridItem colSpan={3}>
+              <label className="block">
+                <span className="text-gray-700">설명</span>
                 <Input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -169,17 +169,17 @@ const CreateSurveyPage: React.FC = () => {
                 />
               </label>
             </GridItem>
-            {/* price */}
-            <GridItem colSpan={2}>
+            <GridItem colSpan={3}>
               <label className="block">
                 <span className="text-gray-700">가격 (정산이 없으면 0원 입력)</span>
                 <Input
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   placeholder="가격을 입력하세요"
-                  className="mt-1"
-                  variant="subtle"
-                  size="sm"
+                  size="md"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-inter"
+                  _hover={{ borderColor: "gray.300" }}
+                  _focus={{ boxShadow: "none" }}
                 />
               </label>
             </GridItem>
@@ -196,7 +196,7 @@ const CreateSurveyPage: React.FC = () => {
           style={{ filter: isChatbotLoading ? "blur(2px)" : "none" }}
         >
           <GridItem colSpan={3} position="relative">
-            <div className="bg-white p-3">
+            <div className="bg-white p-3 rounded-lg">
               <h1 className="text-xl font-bold font-inter">실시간 미리보기</h1>
               <div className="mt-3 p-3 bg-gray-100 rounded overflow-auto relative" style={{ height: "calc(70vh)" }}>
                 {surveyData ? (
@@ -213,7 +213,7 @@ const CreateSurveyPage: React.FC = () => {
             </div>
           </GridItem>
           <GridItem colSpan={2}>
-            <div className="bg-white p-3" style={{ height: "calc(70vh)" }}>
+            <div className="bg-white p-3 rounded-lg" style={{ height: "calc(70vh)" }}>
               <h1 className="text-xl font-bold font-inter">Create Survey</h1>
               <ChatbotChat
                 givenPoll={surveyData || undefined}
