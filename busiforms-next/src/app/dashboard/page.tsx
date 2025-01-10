@@ -33,7 +33,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F1F4FD] to-[#E5EBFD]">
+    <div className="min-h-screen bg-[#FAFAFA]">
       <Header />
       <Toaster />
       {/* 메인 콘텐츠 */}
@@ -74,86 +74,105 @@ const Dashboard: React.FC<{
       {/* 좌측 패널 */}
       <Box
         w="300px"
-        bg="linear-gradient(145deg, #3142C4, #4F71E2)"
-        color="white"
+        bg="white"
+        color="gray.700"
         p={8}
         display="flex"
         flexDirection="column"
-        justifyContent="space-between"
+        justifyContent="flex-start"
         borderRight="1px"
-        borderColor="rgba(255,255,255,0.1)"
-        boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"
+        borderColor="gray.100"
         position="relative"
-        _after={{
-          content: '""',
-          position: "absolute",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          background: "linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)",
-          pointerEvents: "none",
-        }}
       >
         <VStack align="stretch" gap={8}>
           <VStack align="center" gap={4}>
             <Box
-              w="90px"
-              h="90px"
+              position="relative"
+              w="120px"
+              h="120px"
               borderRadius="full"
-              bg="linear-gradient(145deg, #7195E9, #4F71E2)"
+              bg="blue.500"
               display="flex"
               alignItems="center"
               justifyContent="center"
-              fontSize="2xl"
-              boxShadow="0 4px 20px rgba(0,0,0,0.2)"
-              border="3px solid rgba(255,255,255,0.1)"
+              fontSize="3xl"
+              fontWeight="bold"
+              color="white"
+              overflow="hidden"
+              border="4px solid white"
+              boxShadow="0 0 0 2px #E2E8F0, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+              _hover={{
+                transform: "scale(1.02)",
+                transition: "all 0.2s ease"
+              }}
             >
               {user.username[0].toUpperCase()}
             </Box>
-            <Text fontSize="xl" fontWeight="bold" letterSpacing="wide">
-              {user.username} 님
-            </Text>
+            <VStack gap={1}>
+              <Text fontSize="lg" fontWeight="bold" color="gray.800">
+                {user.username}
+              </Text>
+              <Text fontSize="sm" color="gray.500">
+                {user.email}
+              </Text>
+            </VStack>
           </VStack>
           <VStack align="stretch" gap={3}>
             <Box
               as="button"
               onClick={() => router.push("/surveys/create")}
-              bg="rgba(255,255,255,0.1)"
-              _hover={{ bg: "rgba(255,255,255,0.2)", transform: "translateY(-1px)" }}
-              p={3}
-              borderRadius="lg"
-              textAlign="left"
-              transition="all 0.2s"
+              bg="white"
+              p={3.5}
+              borderRadius="xl"
+              transition="all 0.2s ease"
+              position="relative"
               display="flex"
               alignItems="center"
-              gap={2}
+              justifyContent="center"
+              border="1px solid"
+              borderColor="gray.200"
+              boxShadow="sm"
+              _hover={{
+                bg: "gray.50",
+                transform: "translateY(-1px)",
+                boxShadow: "md",
+                borderColor: "gray.300"
+              }}
             >
               <FaPlus />
-              설문지 만들기
+              <Text fontSize="sm" fontWeight="medium" color="gray.700">설문지 만들기</Text>
             </Box>
             <Box
               as="button"
               onClick={() => router.push("/dashboard")}
-              bg="rgba(255,255,255,0.1)"
-              _hover={{ bg: "rgba(255,255,255,0.2)", transform: "translateY(-1px)" }}
-              p={3}
-              borderRadius="lg"
-              textAlign="left"
-              transition="all 0.2s"
+              bg="blue.500"
+              p={3.5}
+              borderRadius="xl"
+              transition="all 0.2s ease"
+              position="relative"
               display="flex"
               alignItems="center"
-              gap={2}
+              justifyContent="center"
+              color="white"
+              border="1px solid"
+              borderColor="blue.600"
+              boxShadow="sm"
+              _hover={{
+                bg: "blue.600",
+                transform: "translateY(-1px)",
+                boxShadow: "md",
+                borderColor: "blue.700"
+              }}
             >
               <FaPoll />
-              나의 설문지
+              <Text fontSize="sm" fontWeight="medium">나의 설문지</Text>
             </Box>
           </VStack>
         </VStack>
       </Box>
       {/* 메인 콘텐츠 */}
       {/* 우측 패널 */}
-      <Box flex="1" p={10} bg="transparent">
+      <Box flex="1" p={10} bg="white" borderLeft="1px" borderColor="gray.100">
         <Heading size="lg" mb={8} color="#2E3A59" letterSpacing="tight">
           나의 설문지
         </Heading>
@@ -184,7 +203,7 @@ const Dashboard: React.FC<{
                 bottom: 0,
                 left: 0,
                 background: "linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)",
-                pointerEvents: "none",
+                pointerEvents: "none"
               }}
             >
               <Heading size="md" mb={2}>
@@ -246,13 +265,7 @@ const Dashboard: React.FC<{
                       p={2}
                       rounded="lg"
                       fontSize="sm"
-                      onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`);
-                        toaster.create({
-                          title: "링크가 복사되었습니다!",
-                          duration: 4000,
-                        });
-                      }}
+                      onClick={() => navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`)}
                       _hover={{ transform: "translateY(-1px)", shadow: "md" }}
                       transition="all 0.2s"
                       boxShadow="0 2px 10px rgba(159,186,241,0.2)"
@@ -296,7 +309,6 @@ const Dashboard: React.FC<{
                       fontSize="sm"
                       onClick={() => {
                         if (confirm("정말로 삭제하시겠습니까?")) {
-                          console.log("deleting survey", survey.id);
                           axios.delete(`http://localhost:3001/api/surveys/${survey.id}`).then(() => {
                             setSurveyList(surveyList.filter((s) => s.id !== survey.id));
                           });
