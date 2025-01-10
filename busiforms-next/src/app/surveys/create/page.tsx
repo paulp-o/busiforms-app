@@ -7,6 +7,9 @@ import ChatbotChat from "@/components/surveys/create/ChatbotChat";
 import Button from "@/components/common/Button/Button";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/useAuth";
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 interface SurveyResponse {
   questions: {
@@ -129,34 +132,36 @@ const CreateSurveyPage: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen pb-40">
+    <div className={`relative min-h-screen pb-40 bg-white ${inter.className}`}>
       <Toaster />
       <Container pt={6}>
-        <div className="bg-white p-3">
-          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
+          <Grid templateColumns="repeat(2, 1fr)" gap={6}>
             <GridItem>
-              <label className="block">
-                <span className="text-gray-700">설문지 제목</span>
+              <label className="block space-y-2">
+                <span className="text-gray-700 font-medium text-sm font-inter">설문지 제목</span>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="설문 제목을 입력하세요"
-                  className="mt-1"
-                  variant="outline"
-                  size={"sm"}
+                  size="md"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-inter"
+                  _hover={{ borderColor: "gray.300" }}
+                  _focus={{ boxShadow: "none" }}
                 />
               </label>
             </GridItem>
             <GridItem>
-              <label className="block">
-                <span className="text-gray-700">설명</span>
+              <label className="block space-y-2">
+                <span className="text-gray-700 font-medium text-sm font-inter">설명</span>
                 <Input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="설문 설명을 입력하세요"
-                  className="mt-1"
-                  variant="subtle"
-                  size="sm"
+                  size="md"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-inter"
+                  _hover={{ borderColor: "gray.300" }}
+                  _focus={{ boxShadow: "none" }}
                 />
               </label>
             </GridItem>
@@ -174,9 +179,9 @@ const CreateSurveyPage: React.FC = () => {
         >
           <GridItem colSpan={3} position="relative">
             <div className="bg-white p-3">
-              <h1 className="text-xl font-bold">실시간 미리보기</h1>
+              <h1 className="text-xl font-bold font-inter">실시간 미리보기</h1>
               <div className="mt-3 p-3 bg-gray-100 rounded overflow-auto relative" style={{ height: "calc(70vh)" }}>
-                {surveyData ? <PreviewSurveyForm survey={surveyData} /> : "설문 데이터가 여기에 표시됩니다."}
+                {surveyData ? <PreviewSurveyForm survey={surveyData} /> : <p className="text-gray-500 font-inter">설문 데이터가 여기에 표시됩니다.</p>}
               </div>
               {isChatbotLoading && (
                 <div className="absolute inset-0 flex items-center justify-center" style={{ height: "calc(70vh)" }}>
@@ -186,10 +191,10 @@ const CreateSurveyPage: React.FC = () => {
             </div>
           </GridItem>
           <GridItem colSpan={2}>
-            <div className="bg-white p-3 " style={{ height: "calc(70vh)" }}>
-              <h1 className="text-xl font-bold">Create Survey</h1>
+            <div className="bg-white p-3" style={{ height: "calc(70vh)" }}>
+              <h1 className="text-xl font-bold font-inter">Create Survey</h1>
               <ChatbotChat
-                givenPoll={surveyData || undefined} // Pass the survey data to the ChatbotChat component
+                givenPoll={surveyData || undefined}
                 onSurveyUpdate={(data: SurveyResponse) => {
                   const formattedData: Survey = {
                     questions: data.questions.map((question) => ({
@@ -205,16 +210,21 @@ const CreateSurveyPage: React.FC = () => {
           </GridItem>
         </Grid>
       </Container>
-      <Grid templateColumns="repeat(5, 1fr)" gap={3} className="fixed bottom-0 left-0 right-0 bg-gray-800 p-2">
+      <Grid templateColumns="repeat(5, 1fr)" gap={3} className="fixed bottom-0 left-0 right-0 bg-[#f1f1f1] p-2">
         <GridItem colSpan={3}>
           <div className="justify-center">
-            <p className="text-gray-100 text-sm">설문지 생성자: {user ? user.email : "Loading..."}</p>
-            <p className="text-gray-100 text-sm">생성자 id: {user ? user.id : "Loading..."}</p>
+            <p className="text-gray-700 text-sm font-inter">설문지 생성자: {user ? user.email : "Loading..."}</p>
+            <p className="text-gray-700 text-sm font-inter">생성자 id: {user ? user.id : "Loading..."}</p>
           </div>
         </GridItem>
         <GridItem colSpan={2}>
           <div className="flex justify-center">
-            <Button onClick={() => createSurveyButtonClicked()}>{isEdit ? "설문지 수정하기!" : "설문지 업로드하기!"}</Button>
+            <Button 
+              onClick={() => createSurveyButtonClicked()} 
+              className="font-inter bg-[#3953D5] hover:bg-[#3953D5]/90 text-white px-6 py-2 rounded-lg transition-all duration-200"
+            >
+              {isEdit ? "설문지 수정하기!" : "설문지 업로드하기!"}
+            </Button>
           </div>
         </GridItem>
       </Grid>
@@ -245,7 +255,7 @@ const PreviewSurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
   };
 
   return (
-    <div className="space-y-4 max-w-3xl mx-auto overflow-auto">
+    <div className="space-y-4 max-w-3xl mx-auto overflow-auto font-inter">
       {survey.questions.map((question: { text: string; questionType: string; options: string[] }, index: number) => (
         <div key={index} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
           <div className="flex items-start justify-between mb-2">
