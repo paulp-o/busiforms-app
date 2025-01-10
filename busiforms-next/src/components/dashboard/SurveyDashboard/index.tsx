@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { FC, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { FC, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,11 +14,11 @@ import {
   Legend,
   ArcElement,
   RadialLinearScale,
-} from 'chart.js';
-import { Bar, Pie, Line, Scatter, Radar } from 'react-chartjs-2';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+} from "chart.js";
+import { Bar, Pie, Line, Scatter, Radar } from "react-chartjs-2";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
-const TagCloud = ({ words }: { words: { text: string; value: number }[] }) => {
+export function TagCloud({ words }: { words: { text: string; value: number }[] }) {
   return (
     <div className="flex flex-wrap gap-2 justify-center">
       {words.map((word, index) => (
@@ -34,28 +34,17 @@ const TagCloud = ({ words }: { words: { text: string; value: number }[] }) => {
       ))}
     </div>
   );
-};
+}
 
 // Chart.js 등록
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  RadialLinearScale
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, ArcElement, RadialLinearScale);
 
 type SurveyResult = {
   question: string;
   visualization_tag: string;
   data: {
     labels: string[];
-    values: number[] | { text: string; value: number; }[] | number[][] | string[][];
+    values: number[] | { text: string; value: number }[] | number[][] | string[][];
   };
 };
 
@@ -69,17 +58,17 @@ type SurveySummary = {
   averageSatisfaction: {
     current: number;
     change: number;
-    trend: 'up' | 'down' | 'same';
+    trend: "up" | "down" | "same";
   };
   completionRate: {
     current: number;
     change: number;
-    trend: 'up' | 'down' | 'same';
+    trend: "up" | "down" | "same";
   };
   averageTime: {
     current: number;
     change: number;
-    trend: 'up' | 'down' | 'same';
+    trend: "up" | "down" | "same";
   };
 };
 
@@ -89,40 +78,40 @@ const dummySummary: SurveySummary = {
   averageSatisfaction: {
     current: 4.2,
     change: 0.3,
-    trend: 'up',
+    trend: "up",
   },
   completionRate: {
     current: 89,
     change: 2,
-    trend: 'down',
+    trend: "down",
   },
   averageTime: {
     current: 4.5,
     change: 0,
-    trend: 'same',
+    trend: "same",
   },
 };
 
 // 트렌드에 따른 스타일 및 아이콘 반환 함수
-const getTrendDisplay = (trend: 'up' | 'down' | 'same', change: number) => {
+const getTrendDisplay = (trend: "up" | "down" | "same", change: number) => {
   switch (trend) {
-    case 'up':
+    case "up":
       return {
-        color: 'text-green-600',
-        icon: '↑',
+        color: "text-green-600",
+        icon: "↑",
         text: `${change} 증가`,
       };
-    case 'down':
+    case "down":
       return {
-        color: 'text-red-600',
-        icon: '↓',
+        color: "text-red-600",
+        icon: "↓",
         text: `${change} 감소`,
       };
-    case 'same':
+    case "same":
       return {
-        color: 'text-gray-600',
-        icon: '←',
-        text: '변화없음',
+        color: "text-gray-600",
+        icon: "←",
+        text: "변화없음",
       };
   }
 };
@@ -139,7 +128,7 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
         setResults(dummyData);
         setSummary(dummySummary);
       } catch (error) {
-        console.error('Failed to fetch survey results:', error);
+        console.error("Failed to fetch survey results:", error);
       } finally {
         setLoading(false);
       }
@@ -155,13 +144,13 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          position: 'top' as const,
+          position: "top" as const,
           labels: {
             padding: 15,
             usePointStyle: true,
             font: {
               size: 11,
-              family: 'Inter',
+              family: "Inter",
             },
           },
         },
@@ -177,18 +166,18 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
           ticks: {
             font: {
               size: 11,
-              family: 'Inter',
+              family: "Inter",
             },
           },
         },
         y: {
           grid: {
-            color: '#f1f5f9',
+            color: "#f1f5f9",
           },
           ticks: {
             font: {
               size: 11,
-              family: 'Inter',
+              family: "Inter",
             },
           },
         },
@@ -196,96 +185,101 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
     };
 
     switch (visualization_tag) {
-      case 'bar_chart':
+      case "bar_chart":
         return (
           <Bar
             data={{
               labels: data.labels,
-              datasets: [{
-                label: result.question,
-                data: data.values as number[],
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-              }],
+              datasets: [
+                {
+                  label: result.question,
+                  data: data.values as number[],
+                  backgroundColor: "rgba(75, 192, 192, 0.5)",
+                },
+              ],
             }}
             options={commonOptions}
           />
         );
 
-      case 'pie_chart':
+      case "pie_chart":
         return (
           <Pie
             data={{
               labels: data.labels,
-              datasets: [{
-                label: result.question,
-                data: data.values as number[],
-                backgroundColor: [
-                  'rgba(255, 99, 132, 0.5)',
-                  'rgba(54, 162, 235, 0.5)',
-                  'rgba(255, 206, 86, 0.5)',
-                  'rgba(75, 192, 192, 0.5)',
-                ],
-              }],
+              datasets: [
+                {
+                  label: result.question,
+                  data: data.values as number[],
+                  backgroundColor: ["rgba(255, 99, 132, 0.5)", "rgba(54, 162, 235, 0.5)", "rgba(255, 206, 86, 0.5)", "rgba(75, 192, 192, 0.5)"],
+                },
+              ],
             }}
             options={commonOptions}
           />
         );
 
-      case 'line_graph':
+      case "line_graph":
         return (
           <Line
             data={{
               labels: data.labels,
-              datasets: [{
-                label: result.question,
-                data: data.values as number[],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                fill: false,
-              }],
+              datasets: [
+                {
+                  label: result.question,
+                  data: data.values as number[],
+                  borderColor: "rgba(75, 192, 192, 1)",
+                  fill: false,
+                },
+              ],
             }}
             options={commonOptions}
           />
         );
 
-      case 'scatter_plot':
+      case "scatter_plot":
         return (
           <Scatter
             data={{
-              datasets: [{
-                label: result.question,
-                data: (data.values as number[]).map((v, i) => ({
-                  x: i,
-                  y: v,
-                })),
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-              }],
+              datasets: [
+                {
+                  label: result.question,
+                  data: (data.values as number[]).map((v, i) => ({
+                    x: i,
+                    y: v,
+                  })),
+                  backgroundColor: "rgba(255, 99, 132, 0.5)",
+                },
+              ],
             }}
             options={commonOptions}
           />
         );
 
-      case 'radar_chart':
+      case "radar_chart":
         return (
           <Radar
             data={{
               labels: data.labels,
-              datasets: [{
-                label: result.question,
-                data: data.values as number[],
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                borderColor: 'rgba(153, 102, 255, 1)',
-              }],
+              datasets: [
+                {
+                  label: result.question,
+                  data: data.values as number[],
+                  backgroundColor: "rgba(153, 102, 255, 0.2)",
+                  borderColor: "rgba(153, 102, 255, 1)",
+                },
+              ],
             }}
             options={commonOptions}
           />
         );
 
-      case 'stacked_bar_chart':
+      case "stacked_bar_chart":
         return (
           <Bar
             data={{
               labels: data.labels,
-              datasets: ((data.values as unknown) as number[][]).map((dataset, index) => ({
+              datasets: (data.values as unknown as number[][]).map((dataset, index) => ({
                 label: `데이터셋 ${index + 1}`,
                 data: dataset,
                 backgroundColor: `rgba(${75 + index * 40}, 192, ${192 - index * 40}, 0.5)`,
@@ -301,16 +295,18 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
           />
         );
 
-      case 'histogram':
+      case "histogram":
         return (
           <Bar
             data={{
               labels: data.labels,
-              datasets: [{
-                label: result.question,
-                data: data.values as number[],
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-              }],
+              datasets: [
+                {
+                  label: result.question,
+                  data: data.values as number[],
+                  backgroundColor: "rgba(75, 192, 192, 0.5)",
+                },
+              ],
             }}
             options={{
               ...commonOptions,
@@ -323,10 +319,10 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
           />
         );
 
-      case 'box_plot':
+      case "box_plot":
         return (
           <div className="flex items-center justify-center p-4">
-            {((data.values as unknown) as number[][]).map((dataset, index) => (
+            {(data.values as unknown as number[][]).map((dataset, index) => (
               <div key={index} className="flex flex-col items-center mx-4">
                 <div className="text-sm mb-2">{data.labels[index]}</div>
                 <div className="w-20 bg-gray-200 relative h-40">
@@ -349,27 +345,29 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
           </div>
         );
 
-      case 'word_cloud':
-        return (
-          <TagCloud words={data.values as { text: string; value: number }[]} />
-        );
+      case "word_cloud":
+        return <TagCloud words={data.values as { text: string; value: number }[]} />;
 
-      case 'keyword_table':
+      case "keyword_table":
         return (
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto">
               <thead>
                 <tr>
                   {data.labels.map((label, i) => (
-                    <th key={i} className="px-4 py-2 bg-gray-100">{label}</th>
+                    <th key={i} className="px-4 py-2 bg-gray-100">
+                      {label}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {((data.values as unknown) as string[][]).map((row, i) => (
+                {(data.values as unknown as string[][]).map((row, i) => (
                   <tr key={i}>
                     {row.map((cell, j) => (
-                      <td key={j} className="border px-4 py-2">{cell}</td>
+                      <td key={j} className="border px-4 py-2">
+                        {cell}
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -378,16 +376,12 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
           </div>
         );
 
-      case 'image_distribution_chart':
+      case "image_distribution_chart":
         return (
           <div className="grid grid-cols-3 gap-4">
             {data.labels.map((url, index) => (
               <div key={index} className="relative">
-                <img
-                  src={url}
-                  alt={`Option ${index + 1}`}
-                  className="w-full h-32 object-cover rounded"
-                />
+                <img src={url} alt={`Option ${index + 1}`} className="w-full h-32 object-cover rounded" />
                 <div className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white px-2 py-1 rounded-tl">
                   {(data.values as number[])[index]}%
                 </div>
@@ -447,13 +441,9 @@ export default function SurveyDashboard({ surveyId }: SurveyDashboardProps) {
           <div key={index} className="bg-white border border-gray-100 rounded-md">
             <div className="p-4 border-b border-gray-50">
               <h2 className="text-sm font-medium text-gray-900">{result.question}</h2>
-              <p className="mt-1 text-xs text-gray-500">
-                {getChartDescription(result.visualization_tag)}
-              </p>
+              <p className="mt-1 text-xs text-gray-500">{getChartDescription(result.visualization_tag)}</p>
             </div>
-            <div className="p-4">
-              {renderChart(result)}
-            </div>
+            <div className="p-4">{renderChart(result)}</div>
           </div>
         ))}
       </div>
@@ -527,9 +517,9 @@ const dummyData: SurveyResult[] = [
     data: {
       labels: ["1분기", "2분기", "3분기", "4분기"],
       values: [
-        [100, 120, 150, 180],  // 전자제품
-        [80, 90, 110, 130],    // 의류
-        [50, 60, 70, 80],      // 가구
+        [100, 120, 150, 180], // 전자제품
+        [80, 90, 110, 130], // 의류
+        [50, 60, 70, 80], // 가구
       ],
     },
   },
@@ -547,9 +537,9 @@ const dummyData: SurveyResult[] = [
     data: {
       labels: ["제품A", "제품B", "제품C"],
       values: [
-        [3.5, 4.0, 4.5, 5.0, 4.2],  // 제품A 평점
-        [3.0, 3.8, 4.2, 4.8, 4.0],  // 제품B 평점
-        [3.2, 3.9, 4.3, 4.9, 4.1],  // 제품C 평점
+        [3.5, 4.0, 4.5, 5.0, 4.2], // 제품A 평점
+        [3.0, 3.8, 4.2, 4.8, 4.0], // 제품B 평점
+        [3.2, 3.9, 4.3, 4.9, 4.1], // 제품C 평점
       ],
     },
   },
@@ -588,12 +578,8 @@ const dummyData: SurveyResult[] = [
     question: "선호하는 제품 디자인",
     visualization_tag: "image_distribution_chart",
     data: {
-      labels: [
-        "/images/design1.jpg",
-        "/images/design2.jpg",
-        "/images/design3.jpg",
-      ],
+      labels: ["/images/design1.jpg", "/images/design2.jpg", "/images/design3.jpg"],
       values: [45, 35, 20],
     },
   },
-]; 
+];

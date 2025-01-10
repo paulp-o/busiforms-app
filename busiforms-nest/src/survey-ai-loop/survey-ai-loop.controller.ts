@@ -17,4 +17,9 @@ export class SurveyAiLoopController {
   async inferVisualizationType(@Body('question') question: string) {
     return this.surveyAiLoopService.inferVisualizationType(question);
   }
+
+  @Post('inferWordCloud')
+  async inferWordCloud(@Body('question') question: string) {
+    return this.surveyAiLoopService.inferWordCloud(question);
+  }
 }

@@ -213,4 +213,78 @@ export class SurveyAiLoopService {
 
     return answer;
   }
+
+  async inferWordCloud(question: string) {
+    // OpenAI에 보낼 ChatCompletion
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const response = await openai.beta.chat.completions.parse({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: [
+            {
+              text: `
+              You are a data analyst. You are given a survey question and need to generate a word cloud. Provide a list of 5-10 main keywords extracted from the responses to the given question.
+              
+              # Output Format
+              
+              The output should be formatted as a JSON object, consisting of a single key \`keywords\`. Do not wrap the JSON in code blocks. Example:
+              
+              \`\`\`json
+              {
+                "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"]
+              }
+              \`\`\`
+              - You MUST generate an empty array if no keywords are suitable.
+              `,
+              type: 'text',
+            },
+          ],
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              text: `Question: ${question}`,
+              type: 'text',
+            },
+          ],
+        },
+      ],
+      response_format: {
+        type: 'json_schema',
+        json_schema: {
+          name: 'word_cloud_keywords',
+          strict: false,
+          schema: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              keywords: {
+                type: 'array',
+                additionalProperties: false,
+                items: {
+                  type: 'string',
+                  additionalProperties: false,
+                },
+              },
+            },
+          },
+        },
+      },
+      temperature: 1,
+      max_completion_tokens: 2048,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+
+    // it's already parsed
+    const answer = response.choices[0].message.parsed;
+
+    return answer;
+  }
 }

@@ -21,7 +21,7 @@ interface Survey {
   title: string;
   description: string;
   questions: Question[];
-  price?: number;
+  price: number;
 }
 
 // Fetch Survey Data from Server

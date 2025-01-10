@@ -25,6 +25,8 @@ export default function SurveyResultsPage() {
 
   const [surveyData, setSurveyData] = useState<SurveyData | null>(null);
   const [responsesData, setResponsesData] = useState<ResponseData[] | null>(null);
+  const [wordCloudData, setWordCloudData] = useState<string[] | null>(null);
+  const [loadingWordCloud, setLoadingWordCloud] = useState<boolean>(false);
   const { surveyId } = useParams();
 
   useEffect(() => {
@@ -51,6 +53,27 @@ export default function SurveyResultsPage() {
     fetchSurveyData();
     fetchResponsesData();
   }, [surveyId]);
+
+  useEffect(() => {
+    const fetchWordCloudData = async () => {
+      setLoadingWordCloud(true);
+      try {
+        const allAnswers = responsesData?.map((response) => Object.values(response.answers).join(" ")).join(" ") || "";
+        const response = await axios.post("http://localhost:3001/api/survey-ai-loop/inferWordCloud", {
+          question: allAnswers,
+        });
+        setWordCloudData(response.data.keywords);
+      } catch (error) {
+        console.error("Error fetching word cloud data:", error);
+      } finally {
+        setLoadingWordCloud(false);
+      }
+    };
+
+    if (surveyData?.questions.some((question) => question.visualizationType === "word_cloud")) {
+      fetchWordCloudData();
+    }
+  }, [responsesData, surveyData]);
 
   const surveyInfo = {
     title: "제목없는 설문지",
@@ -227,16 +250,23 @@ export default function SurveyResultsPage() {
                 {surveyData.questions.map((question) => (
                   <div key={question.id} className="bg-white border border-gray-100 rounded-lg p-5">
                     <h3 className="text-lg font-bold mb-3">{question.text}</h3>
-                    <div className="text-sm text-gray-500 mb-4">Visualization Type: {question.visualizationType}</div>
+                    {/* <div className="text-sm text-gray-500 mb-4">Visualization Type: {question.visualizationType}</div> */}
                     <div className="h-32 w-full bg-gray-100 rounded-lg">
                       {question.visualizationType === "bar_chart" && <Bar data={generateBarChartData(question.id)} />}
                       {question.visualizationType === "pie_chart" && <Pie data={generatePieChartData(question.id)} />}
                       {question.visualizationType === "histogram" && (
                         <Bar data={generateHistogramData(question.id)} options={{ scales: { x: { beginAtZero: true } } }} />
                       )}
+                      {question.visualizationType === "word_cloud" &&
+                        (loadingWordCloud ? (
+                          <LoadingSpinner />
+                        ) : (
+                          <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(wordCloudData, null, 2)}</pre>
+                        ))}
                       {question.visualizationType !== "bar_chart" &&
                         question.visualizationType !== "pie_chart" &&
                         question.visualizationType !== "histogram" &&
+                        question.visualizationType !== "word_cloud" &&
                         responsesData.map((response) => (
                           <div key={response.id} className="border p-2 rounded">
                             {response.answers[question.id]}

@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/layout/Header/Header";
 import { useAuth } from "@/hooks/useAuth";
-import { Flex, VStack, Box, Heading, Grid, GridItem, Spinner, Text, useToast } from "@chakra-ui/react";
+import { Flex, VStack, Box, Heading, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
+import { Toaster, toaster } from "@/components/ui/toaster";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
+      <Toaster />
       {/* 메인 콘텐츠 */}
       <Dashboard user={user} surveys={surveys} />
     </div>
@@ -60,7 +61,6 @@ const Dashboard: React.FC<{
 }> = ({ user, surveys }) => {
   const router = useRouter();
   const [surveyList, setSurveyList] = useState(surveys);
-  const toast = useToast();
 
   useEffect(() => {
     setSurveyList(surveys);
@@ -186,11 +186,9 @@ const Dashboard: React.FC<{
                       fontSize="xs"
                       onClick={() => {
                         navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`);
-                        toast({
-                          title: "링크가 복사되었습니다.",
-                          status: "success",
-                          duration: 2000,
-                          isClosable: true,
+                        toaster.create({
+                          title: "링크가 복사되었습니다!",
+                          duration: 4000,
                         });
                       }}
                       _hover={{ bg: "gray.600" }}
