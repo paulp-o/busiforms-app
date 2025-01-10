@@ -1,23 +1,48 @@
 "use client";
-import Button from "@/components/common/Button/Button";
-import Header from "@/components/layout/Header/Header";
-import { Container } from "@chakra-ui/react";
+
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+
 import Link from "next/link";
+import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      <Container maxW="container.xl" py={10}>
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Welcome to BusiForms</h1>
-          <p className="text-lg mb-8">Streamline your business processes with our easy-to-use forms.</p>
-          <img src="/images/비지폼 FWQA 1.png" alt="Landing Page" className="mx-auto mb-8" style={{ maxWidth: "50%", height: "auto" }} />
-          <Link href="/dashboard">
-            <Button>Get Started</Button>
-          </Link>
+
+    <div className={styles.container}>
+      <div className={styles.content}>
+        <div className={styles.backgroundCircle} />
+        <div className={styles.logo}>
+          <Image
+            src="/images/mainlogo.svg"
+            alt="BusiForm Logo"
+            width={300}
+            height={75}
+            priority
+          />
         </div>
-      </Container>
+        
+        <div className={styles.textContent}>
+          <p className={styles.koreanText}>하품하고 기지개 한 번 피면,</p>
+          <p className={styles.koreanTextBold}>설문과 분석이 끝나있다!</p>
+        </div>
+
+        <Link href="/auth/login">
+          <Button variant="solid" size="lg" className={styles.loginButton}>
+            LOGIN
+          </Button>
+        </Link>
+
+        <div className={styles.characterImage}>
+          <Image
+            src="/images/ch-with-form.png"
+            alt="Character with form"
+            width={1200}
+            height={1200}
+            priority
+          />
+        </div>
+      </div>
     </div>
   );
 }

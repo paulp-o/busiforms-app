@@ -5,6 +5,7 @@ import { CheckboxGroup } from "@chakra-ui/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SendHorizontal } from "lucide-react";
 import React, { useState } from "react";
+import Image from "next/image";
 
 interface Message {
   content: string;
@@ -146,7 +147,13 @@ const ChatbotChat: React.FC<{
           onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           disabled={isLoading}
         />
-        <Button variant="solid" onClick={handleSendMessage} disabled={isLoading} size="sm">
+        <Button 
+          variant="solid" 
+          onClick={handleSendMessage} 
+          disabled={isLoading} 
+          size="sm"
+          className="bg-[#515151] hover:bg-[#515151]/90 text-white"
+        >
           {isLoading ? (
             <div> {/* <LoadingSpinner /> */}</div>
           ) : (
@@ -167,8 +174,28 @@ const ChatBubbleList: React.FC<{ messages: Message[] }> = ({ messages }) => {
   return (
     <div>
       {messages.map((message, index) => (
-        <div key={index} className={`chat ${message.isBot ? "chat-start" : "chat-end"}`}>
-          <div className={`chat-bubble ${message.isBot ? "chat-bubble-primary" : "chat-bubble-success"} text-sm`}>{message.content}</div>
+        <div key={index} className={`chat ${message.isBot ? "chat-start" : "chat-end"} relative`}>
+          {message.isBot && (
+            <div className="chat-image avatar">
+              <div className="w-8 h-8 rounded-full overflow-hidden">
+                <Image
+                  src="/images/chatbot.png"
+                  alt="Chatbot"
+                  width={32}
+                  height={32}
+                />
+              </div>
+            </div>
+          )}
+          <div 
+            className={`chat-bubble text-sm font-inter ${
+              message.isBot 
+                ? "bg-[#3953D5] text-white" 
+                : "bg-[#DFE7FA] text-gray-800"
+            }`}
+          >
+            {message.content}
+          </div>
         </div>
       ))}
     </div>
