@@ -5,6 +5,7 @@ import { getCookie, setCookie, deleteCookie } from "cookies-next";
 interface User {
   email: string;
   id: string;
+  username: string;
 }
 
 export function useAuth() {
@@ -20,8 +21,15 @@ export function useAuth() {
     const id = getCookie("userId");
 
     if (email && id) {
-      setUser({ email: String(email), id: String(id) });
+      try {
+        const response = await axios.get("http://localhost:3001/api/users/" + email);
+        const userData = response.data;
+        setUser({ email: userData.email, id: userData.id, username: userData.name });
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
+      }
     }
+
     setLoading(false);
   };
 
@@ -40,7 +48,28 @@ export function useAuth() {
         return { success: true };
       }
       return { success: false, error: "Invalid credentials" };
-    } catch (error) {
+    } catch {
+      return { success: false, error: "Login failed" };
+    }
+  };
+
+  const register = async (email: string, password: string, username: string) => {
+    try {
+      const response = await axios.post("http://localhost:3001/api/users/register", {
+        email,
+        password,
+        username: username || email.split("@")[0],
+      });
+
+      if (response.data.id && response.data.email) {
+        const userData = response.data;
+        setCookie("email", userData.email, { maxAge: 60 * 60 * 24 * 7 }); // 7 days
+        setCookie("userId", userData.id, { maxAge: 60 * 60 * 24 * 7 });
+        setUser(userData);
+        return { success: true };
+      }
+      return { success: false, error: "Invalid credentials" };
+    } catch {
       return { success: false, error: "Login failed" };
     }
   };
@@ -48,8 +77,9 @@ export function useAuth() {
   const logout = () => {
     deleteCookie("email");
     deleteCookie("userId");
+    deleteCookie("username");
     setUser(null);
   };
 
-  return { user, loading, login, logout };
+  return { user, loading, login, logout, register };
 }

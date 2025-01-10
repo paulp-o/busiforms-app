@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { handleSignOut } from '@/app/actions/auth';
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 interface HeaderProps {
   pageInfo?: {
@@ -14,6 +14,7 @@ interface HeaderProps {
 
 export default function Header({ pageInfo }: HeaderProps) {
   const [showInfo, setShowInfo] = useState(false);
+  const { logout } = useAuth();
 
   return (
     <header className="bg-white border-b border-gray-200">
@@ -22,46 +23,20 @@ export default function Header({ pageInfo }: HeaderProps) {
           {/* 로고 */}
           <div className="flex-shrink-0">
             <Link href="/dashboard">
-              <Image
-                src="/images/mainlogo.svg"
-                alt="BusiForm"
-                width={125}
-                height={40}
-                priority
-                className="h-10 w-auto"
-              />
+              <Image src="/images/mainlogo.svg" alt="BusiForm" width={125} height={40} priority className="h-10 w-auto" />
             </Link>
           </div>
 
           {/* 우측 버튼들 */}
           <div className="flex items-center space-x-4">
             {pageInfo && (
-              <button
-                type="button"
-                onClick={() => setShowInfo(!showInfo)}
-                className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
-              >
-                <Image
-                  src="/images/infobutton.png"
-                  alt="Info"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                />
+              <button type="button" onClick={() => setShowInfo(!showInfo)} className="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+                <Image src="/images/infobutton.png" alt="Info" width={24} height={24} className="w-6 h-6" />
               </button>
             )}
-            
-            <button
-              onClick={() => handleSignOut()}
-              className="p-2 rounded-full hover:bg-gray-100 focus:outline-none"
-            >
-              <Image
-                src="/images/logoutbutton.png"
-                alt="Logout"
-                width={24}
-                height={24}
-                className="w-6 h-6"
-              />
+
+            <button onClick={() => logout()} className="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+              <Image src="/images/logoutbutton.png" alt="Logout" width={24} height={24} className="w-6 h-6" />
             </button>
           </div>
         </div>
@@ -73,10 +48,7 @@ export default function Header({ pageInfo }: HeaderProps) {
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">{pageInfo.title}</h2>
-              <button
-                onClick={() => setShowInfo(false)}
-                className="text-gray-400 hover:text-gray-500"
-              >
+              <button onClick={() => setShowInfo(false)} className="text-gray-400 hover:text-gray-500">
                 ✕
               </button>
             </div>
@@ -86,4 +58,4 @@ export default function Header({ pageInfo }: HeaderProps) {
       )}
     </header>
   );
-} 
+}
