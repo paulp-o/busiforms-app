@@ -134,7 +134,7 @@ const ChatbotChat: React.FC<{
           </Fieldset.Legend>
           <Fieldset.Content>
             <Stack direction="row" flexWrap="wrap" gap={2}>
-              {["성별", "이름", "나이", "전화번호"].map((field) => (
+              {["성별", "이름", "나이", "전화번호", "이메일"].map((field) => (
                 <Stack align="left" flex="1 1 45%" key={field}>
                   <Checkbox value={field} variant="solid">
                     {field}

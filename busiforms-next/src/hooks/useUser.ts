@@ -3,7 +3,6 @@ import { getCookie, setCookie } from "cookies-next";
 export function getUserFromCookies() {
   const email = getCookie("email");
   const id = getCookie("userId");
-  const username = getCookie("username");
   if (email && id) {
     return { email: email as string, id: id as string };
   }

@@ -11,7 +11,7 @@ import LoginButton from "./LoginButton";
 export default function Header() {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
-  const { logout, user, loading } = useAuth();
+  const { logout } = useAuth();
 
   // try to get user email from cookie
   const userEmail = getCookie("email");

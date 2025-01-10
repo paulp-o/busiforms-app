@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Input from "@/components/common/Input/Input";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import { Card, Flex, Stack } from "@chakra-ui/react";
+import { Card } from "@chakra-ui/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -51,7 +52,6 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <img className="mx-auto h-12 w-auto" src="/images/mainlogo.svg" alt="BusiForm" />
-    
         </div>
         <Card.Root>
           <Card.Header>
