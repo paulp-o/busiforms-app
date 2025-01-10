@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgres"
-  url      = env("DATABASE_URL") // .env에 넣으세요
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -37,8 +37,8 @@ model Question {
   questionType      QuestionType
   options   String[] // 선택지
   visualizationType VisualizationType?
-  survey    Survey   @relation(fields: [surveyId], references: [id])
-  surveyId  String
+  survey    Survey?  @relation(fields: [surveyId], references: [id], onDelete: SetNull)
+  surveyId  String?
   createdAt DateTime @default(now())
 }
 
@@ -64,8 +64,8 @@ enum VisualizationType {
 
 model Response {
   id        String   @id @default(cuid())
-  survey    Survey   @relation(fields: [surveyId], references: [id])
-  surveyId  String
+  survey    Survey?  @relation(fields: [surveyId], references: [id], onDelete: SetNull)
+  surveyId  String?
   answers   Json     // PostgreSQL JSON
   createdAt DateTime @default(now())
 }

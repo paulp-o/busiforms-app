@@ -90,7 +90,6 @@ export class SurveyService {
       data: {
         title,
         description,
-        price,
 
         // 아래는 단순 예시: 기존 질문 전부 지우고 새로 만든다든지,
         // or upsert를 사용해 수정·생성을 구분할 수도 있음.

@@ -6,6 +6,7 @@ import axios from "axios";
 import Header from "@/components/layout/Header/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { Flex, VStack, Box, Heading, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
+import { FaPlus, FaClipboard, FaEdit, FaTrash, FaPoll } from "react-icons/fa";
 
 import { Toaster, toaster } from "@/components/ui/toaster";
 
@@ -124,7 +125,11 @@ const Dashboard: React.FC<{
               borderRadius="lg"
               textAlign="left"
               transition="all 0.2s"
+              display="flex"
+              alignItems="center"
+              gap={2}
             >
+              <FaPlus />
               설문지 만들기
             </Box>
             <Box
@@ -136,7 +141,11 @@ const Dashboard: React.FC<{
               borderRadius="lg"
               textAlign="left"
               transition="all 0.2s"
+              display="flex"
+              alignItems="center"
+              gap={2}
             >
+              <FaPoll />
               나의 설문지
             </Box>
           </VStack>
@@ -194,13 +203,6 @@ const Dashboard: React.FC<{
                 height={"100%"}
                 flexDirection="column"
                 justifyContent="space-between"
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`);
-                  toaster.create({
-                    title: "링크가 복사되었습니다!",
-                    duration: 4000,
-                  });
-                }}
                 _hover={{ shadow: "xl", transform: "translateY(-2px)" }}
                 transition="all 0.2s"
                 border="1px solid rgba(0,0,0,0.05)"
@@ -230,8 +232,12 @@ const Dashboard: React.FC<{
                       _hover={{ transform: "translateY(-1px)", shadow: "md" }}
                       transition="all 0.2s"
                       boxShadow="0 2px 10px rgba(113,149,233,0.2)"
+                      display="flex"
+                      alignItems="center"
+                      gap={2}
                     >
-                      설문조사 참가 링크
+                      <FaPoll />
+                      바로가기
                     </Box>
                     <Box
                       as="button"
@@ -240,12 +246,22 @@ const Dashboard: React.FC<{
                       p={2}
                       rounded="lg"
                       fontSize="sm"
-                      onClick={() => navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`)}
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`);
+                        toaster.create({
+                          title: "링크가 복사되었습니다!",
+                          duration: 4000,
+                        });
+                      }}
                       _hover={{ transform: "translateY(-1px)", shadow: "md" }}
                       transition="all 0.2s"
                       boxShadow="0 2px 10px rgba(159,186,241,0.2)"
+                      display="flex"
+                      alignItems="center"
+                      gap={2}
                     >
-                      복사하기
+                      <FaClipboard />
+                      링크 복사하기
                     </Box>
                     <Box
                       as="button"
@@ -264,8 +280,12 @@ const Dashboard: React.FC<{
                       _hover={{ transform: "translateY(-1px)", shadow: "md" }}
                       transition="all 0.2s"
                       boxShadow="0 2px 10px rgba(113,149,233,0.2)"
+                      display="flex"
+                      alignItems="center"
+                      gap={2}
                     >
-                      설문조사 수정하기
+                      <FaEdit />
+                      수정하기
                     </Box>
                     <Box
                       as="button"
@@ -276,6 +296,7 @@ const Dashboard: React.FC<{
                       fontSize="sm"
                       onClick={() => {
                         if (confirm("정말로 삭제하시겠습니까?")) {
+                          console.log("deleting survey", survey.id);
                           axios.delete(`http://localhost:3001/api/surveys/${survey.id}`).then(() => {
                             setSurveyList(surveyList.filter((s) => s.id !== survey.id));
                           });
@@ -284,8 +305,12 @@ const Dashboard: React.FC<{
                       _hover={{ transform: "translateY(-1px)", shadow: "md" }}
                       transition="all 0.2s"
                       boxShadow="0 2px 10px rgba(159,186,241,0.2)"
+                      display="flex"
+                      alignItems="center"
+                      gap={2}
                     >
-                      설문조사 삭제하기
+                      <FaTrash />
+                      삭제하기
                     </Box>
                   </Grid>
                   <Box
