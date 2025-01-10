@@ -24,3 +24,4 @@ export class AuthController {
     return { message: 'Login success', user };
   }
 }
+
