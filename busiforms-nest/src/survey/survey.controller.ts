@@ -19,6 +19,7 @@ export class SurveyController {
     @Body('userId') userId: string,
     @Body('title') title: string,
     @Body('description') description?: string,
+    @Body('price') price?: number,
     @Body('questions')
     questions?: {
       text: string;
@@ -31,6 +32,7 @@ export class SurveyController {
       userId,
       title,
       description,
+      price,
       questions,
     );
   }
@@ -53,6 +55,7 @@ export class SurveyController {
   @Put(':id')
   async updateSurvey(
     @Param('id') id: string,
+    @Body('price') price?: number,
     @Body('title') title?: string,
     @Body('description') description?: string,
     @Body('questions')
@@ -64,7 +67,13 @@ export class SurveyController {
       visualizationType?: VisualizationType;
     }[],
   ) {
-    return this.surveyService.updateSurvey(id, title, description, questions);
+    return this.surveyService.updateSurvey(
+      id,
+      title,
+      price,
+      description,
+      questions,
+    );
   }
 
   @Delete(':id')

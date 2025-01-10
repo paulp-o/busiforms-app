@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Header from "@/components/layout/Header/Header";
 import { useAuth } from "@/hooks/useAuth";
-import { Flex, VStack, Box, Heading, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
+import { Flex, VStack, Box, Heading, Grid, GridItem, Spinner, Text, useToast } from "@chakra-ui/react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -50,6 +50,7 @@ interface DashboardProps {
     title: string;
     description: string;
     createdAt: string;
+    price?: number;
   }[];
 }
 
@@ -59,6 +60,7 @@ const Dashboard: React.FC<{
 }> = ({ user, surveys }) => {
   const router = useRouter();
   const [surveyList, setSurveyList] = useState(surveys);
+  const toast = useToast();
 
   useEffect(() => {
     setSurveyList(surveys);
@@ -151,6 +153,9 @@ const Dashboard: React.FC<{
                 <Box mb={4} fontSize="x-small">
                   {survey.description}
                 </Box>
+                <Box fontSize="sm" color="gray.500" mb={4}>
+                  {survey.price === 0 || !survey.price ? "정산 설정되지 않음" : `정산 설정됨: ${survey.price} 원`}
+                </Box>
                 <Box fontSize="sm" color="gray.500">
                   {new Date(survey.createdAt).toLocaleDateString()}
                 </Box>
@@ -179,7 +184,15 @@ const Dashboard: React.FC<{
                       p={1}
                       rounded="md"
                       fontSize="xs"
-                      onClick={() => navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`)}
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/surveys/${survey.id}`);
+                        toast({
+                          title: "링크가 복사되었습니다.",
+                          status: "success",
+                          duration: 2000,
+                          isClosable: true,
+                        });
+                      }}
                       _hover={{ bg: "gray.600" }}
                       transition="background-color 0.2s"
                     >

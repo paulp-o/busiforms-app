@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import Button from "./common/Button/Button";
+
 import axios from "axios";
 
 import { useRouter } from "next/navigation";
+import { Button } from "@chakra-ui/react";
 
 // TypeScript Interfaces
 type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime" | "long_text";
@@ -21,6 +22,7 @@ interface Survey {
   id: string;
   title: string;
   description: string;
+  price: number;
   questions: Question[];
 }
 
@@ -57,6 +59,7 @@ const createValidationSchema = (questions: Question[]) => {
 const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
   const router = useRouter();
   const validationSchema = createValidationSchema(survey.questions);
+  const [isPaid, setIsPaid] = useState(survey.price === 0);
 
   const {
     control,
@@ -77,6 +80,17 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
     } catch (error) {
       console.error("Error submitting data:", error);
       // You might want to show an error message to the user here
+    }
+  };
+
+  const handlePayment = () => {
+    // Simulate a payment process
+    const paymentSuccessful = window.confirm("결제를 진행하시겠습니까?");
+    if (paymentSuccessful) {
+      setIsPaid(true);
+      alert("결제가 완료되었습니다.");
+    } else {
+      alert("결제가 실패했습니다.");
     }
   };
 
@@ -171,9 +185,31 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
           {errors[question.id] && <span className="text-red-500 text-sm">{errors[question.id]?.message?.toString()}</span>}
         </div>
       ))}
-      <Button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onSubmit={handleSubmit(onSubmit)}>
-        제출하기!
-      </Button>
+      {survey.price > 0 && !isPaid && (
+        <>
+          <p className="text-red-500">이 설문조사는 {survey.price}원을 결제해야 제출할 수 있습니다!</p>
+          <div className="flex justify-center">
+            <Button
+              type="button"
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 w-full max-w-md"
+              onClick={handlePayment}
+              variant="solid"
+            >
+              결제하기
+            </Button>
+          </div>
+        </>
+      )}
+      <div className="flex justify-center">
+        <Button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full max-w-md"
+          onSubmit={handleSubmit(onSubmit)}
+          disabled={!isPaid && survey.price > 0}
+        >
+          제출하기!
+        </Button>
+      </div>
     </form>
   );
 };

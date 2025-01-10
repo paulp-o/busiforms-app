@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import SurveyForm from "@/components/SurveyForm"; // Import the SurveyForm component
 
 // TypeScript Interfaces
-type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime";
+type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime" | "long_text";
 
 interface Question {
   id: string;
@@ -21,6 +21,7 @@ interface Survey {
   title: string;
   description: string;
   questions: Question[];
+  price?: number;
 }
 
 // Fetch Survey Data from Server

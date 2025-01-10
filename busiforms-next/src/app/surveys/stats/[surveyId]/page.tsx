@@ -1,8 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import SurveyDashboard from "@/components/dashboard/SurveyDashboard";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Header from "@/components/layout/Header/Header";
 import { Bar, Pie } from "react-chartjs-2";

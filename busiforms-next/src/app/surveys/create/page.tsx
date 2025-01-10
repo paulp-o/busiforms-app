@@ -17,12 +17,6 @@ interface SurveyResponse {
   }[];
 }
 
-const inferVisualizationType = async () => {
-  // Implement your logic to infer the visualization type based on the question
-  // For now, let's return a placeholder value
-  return "bar"; // Example visualization type
-};
-
 const CreateSurveyPage: React.FC = () => {
   const [surveyData, setSurveyData] = useState<Survey | null>(null);
   const [title, setTitle] = useState<string>("");
@@ -32,6 +26,7 @@ const CreateSurveyPage: React.FC = () => {
   const isEdit = searchParams.get("edit") === "true";
   const surveyId = searchParams.get("id");
   const [isChatbotLoading, setIsChatbotLoading] = useState(false);
+  const [price, setPrice] = useState<string>("0");
 
   const router = useRouter();
 
@@ -60,6 +55,7 @@ const CreateSurveyPage: React.FC = () => {
             description?: string;
             createdAt?: string;
             updatedAt?: string;
+
             options: { id?: string; createdAt?: string; updatedAt?: string }[];
           }) => {
             delete question.id;
@@ -97,18 +93,21 @@ const CreateSurveyPage: React.FC = () => {
     }
 
     try {
+      console.log("price is", price);
       const response = isEdit
         ? await axios.put(`http://localhost:3001/api/surveys/${surveyId}`, {
             ...surveyData,
             title,
             description,
+            price: Number(price),
             userId: user.id,
           })
         : await axios.post("http://localhost:3001/api/surveys", {
+            ...surveyData,
             userId: user.id,
             title,
+            price: Number(price),
             description,
-            ...surveyData,
           });
 
       if (response.status !== 200 && response.status !== 201) {
@@ -138,8 +137,8 @@ const CreateSurveyPage: React.FC = () => {
       <Toaster />
       <Container pt={6}>
         <div className="bg-white p-3">
-          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-            <GridItem>
+          <Grid templateColumns="repeat(9, 1fr)" gap={4}>
+            <GridItem colSpan={2}>
               <label className="block">
                 <span className="text-gray-700">설문지 제목</span>
                 <Input
@@ -152,13 +151,27 @@ const CreateSurveyPage: React.FC = () => {
                 />
               </label>
             </GridItem>
-            <GridItem>
+            <GridItem colSpan={5}>
               <label className="block">
                 <span className="text-gray-700">설명</span>
                 <Input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="설문 설명을 입력하세요"
+                  className="mt-1"
+                  variant="subtle"
+                  size="sm"
+                />
+              </label>
+            </GridItem>
+            {/* price */}
+            <GridItem colSpan={2}>
+              <label className="block">
+                <span className="text-gray-700">가격 (정산이 없으면 0원 입력)</span>
+                <Input
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="가격을 입력하세요"
                   className="mt-1"
                   variant="subtle"
                   size="sm"
