@@ -1,58 +1,31 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./page.module.css";
-
-import { motion } from "framer-motion";
 import React from "react";
-import { AuroraBackground } from "@/components/ui/aurora-background";
-
-function Background() {
-  return <div className={styles.background}>{/* You can put something here */}</div>;
-}
 
 export default function Home() {
   return (
-    <div className={styles.container}>
-      <div className={styles.backgroundWrapper}>
-        <AuroraBackground>
-          <motion.div
-            initial={{ opacity: 0.0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: 0.3,
-              duration: 0.8,
-              ease: "easeInOut",
-            }}
-            className="relative flex flex-col gap-4 items-center justify-center px-4"
-          >
-            <Background />
-          </motion.div>
-        </AuroraBackground>
-      </div>
+    <div className="min-h-screen flex flex-col relative">
+      <div className="relative z-10 flex-1 flex items-center justify-center">
+        <div className="max-w-7xl w-full mx-auto px-4 text-center relative flex flex-row items-center justify-center gap-8">
+          <div className="absolute bg-gradient-to-b from-transparent to-white/20 rounded-full blur-3xl" />
 
-      <div className={styles.contentWrapper}>
-        <div className={styles.content}>
-          <div className={styles.backgroundCircle} />
-          <div className={styles.logo}>
-            <Image src="/images/mainlogo.svg" alt="BusiForm Logo" width={300} height={75} priority />
+          <div className="flex flex-col items-start">
+            <div className="mb-4">
+              <Image src="/images/mainlogo.svg" alt="BusiForm Logo" width={300} height={75} priority className="mx-auto" />
+            </div>
+
+            <div className="mb-4 space-y-2">
+              <p className="text-xl text-gray-700">test catchphrase</p>
+              <p className="text-2xl font-bold text-gray-900">row 2!</p>
+            </div>
+
+            <Link href="/dashboard">
+              <button className="btn btn-primary px-6 py-3">시작하기!</button>
+            </Link>
           </div>
 
-          <div className={styles.textContent}>
-            <p className={styles.koreanText}>하품하고 기지개 한 번 피면,</p>
-            <p className={styles.koreanTextBold}>설문과 분석이 끝나있다!</p>
-          </div>
-
-          <Link href="/auth/login">
-            <Button variant="solid" size="lg" className={styles.loginButton}>
-              시작하기!
-            </Button>
-          </Link>
-
-          <div className={styles.characterImage}>
-            <Image src="/images/ch-with-form.png" alt="Character with form" width={1200} height={1200} priority />
+          <div className="mt-4">
+            <Image src="/images/ch-with-form.png" alt="Character with form" width={800} height={800} priority className="mx-auto" />
           </div>
         </div>
       </div>

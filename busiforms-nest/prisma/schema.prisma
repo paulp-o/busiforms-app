@@ -8,10 +8,11 @@ generator client {
 }
 
 model User {
-  id        String    @id @default(cuid()) 
-  email     String    @unique
-  name      String?
-  role      String    @default("user")
+  id        String    @id @unique
+  email     String    
+  name      String? @default("user")
+  accountProvider String
+  role      Role    @default(user)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   surveys   Survey[]
@@ -35,6 +36,7 @@ model Question {
   id        String   @id @default(cuid())
   text      String
   questionType      QuestionType
+  optional          Boolean  @default(false)
   options   String[] // 선택지
   visualizationType VisualizationType?
   survey    Survey?  @relation(fields: [surveyId], references: [id], onDelete: SetNull)
@@ -68,4 +70,9 @@ model Response {
   surveyId  String?
   answers   Json     // PostgreSQL JSON
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  admin
+  user
 }

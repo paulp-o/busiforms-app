@@ -1,3 +1,11 @@
 {
-  "github.copilot.editor.enableAutoCompletions": true
+  "github.copilot.editor.enableAutoCompletions": true,
+  "editor.wordWrapColumn": 120,
+  "powermode.enabled": true,
+  "powermode.combo.location": "off",
+  "powermode.explosions.duration": 250,
+  "powermode.explosions.size": 8,
+  "powermode.explosions.maxExplosions": 10,
+  "powermode.explosions.frequency": 1,
+  "powermode.explosions.gifMode": "restart"
 }

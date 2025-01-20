@@ -1,69 +1,86 @@
-datasource db {
-  provider = "postgres"
-  url      = env("DATABASE_URL")
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+ 
 generator client {
   provider = "prisma-client-js"
 }
-
+ 
 model User {
-  id        String    @id @default(cuid()) // PostgreSQL은 cuid를 권장
-  email     String    @unique
-  name      String?
-  role      String    @default("user") // 사용자 역할
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  surveys   Survey[]
-}
-
-model Survey {
-  id          String      @id @default(cuid())
-  title       String
-  description String?
-  questions   Question[]  // 질문과 관계 유지
-  responses   Response[]  // 응답과 관계 유지
-  user        User        @relation(fields: [userId], references: [id])
-  userId      String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  theme       Json?       // PostgreSQL JSON 타입
-}
-
-model Question {
-  id        String   @id @default(cuid())
-  text      String
-  questionType      QuestionType
-  options   String[] // 선택지
-  visualizationType VisualizationType
-  survey    Survey   @relation(fields: [surveyId], references: [id])
-  surveyId  String
+  id            String          @id @default(cuid())
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+ 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
-
-enum QuestionType {
-  radio
-  checkbox
-  dropdown
-  text
-  number
-  date
-  time
-  datetime
-  long_text
-}
-
-enum VisualizationType {
-  bar_chart
-  pie_chart
-  histogram
-  word_cloud
-}
-
-model Response {
-  id        String   @id @default(cuid())
-  survey    Survey   @relation(fields: [surveyId], references: [id])
-  surveyId  String
-  answers   Json     // PostgreSQL JSON 타입
+ 
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+}
+ 
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
+}
+ 
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@id([userId, credentialID])
 }

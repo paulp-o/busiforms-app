@@ -1,19 +1,26 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { Role } from '@prisma/client';
 
 @Controller('api/users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // 간단한 회원가입/로그인
-  @Post('register')
-  async register(@Body('email') email: string, @Body('name') name?: string) {
-    const user = await this.userService.registerUser(email, name);
+  @Post('signIn')
+  async signIn(@Body() createUserDto: CreateUserDto) {
+    const user = await this.userService.signInUser(
+      createUserDto.email,
+      createUserDto.userId,
+      createUserDto.name,
+      createUserDto.accountProvider,
+      createUserDto.role as Role,
+    );
     return user;
   }
 
-  @Get(':email')
-  async getUser(@Param('email') email: string) {
-    return this.userService.getUserByEmail(email);
+  @Get(':id')
+  async getUser(@Param('id') id: string) {
+    return this.userService.getUserById(id);
   }
 }

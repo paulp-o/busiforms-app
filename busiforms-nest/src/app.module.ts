@@ -4,7 +4,7 @@ import { SurveyModule } from './survey/survey.module';
 // import { QuestionModule } from './question/question.module';
 import { ResponseModule } from './response/response.module';
 import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
+// import { AuthModule } from './auth (unused)/auth.module';
 import { PrismaService } from './common/prisma.service';
 
 @Module({
@@ -14,7 +14,7 @@ import { PrismaService } from './common/prisma.service';
     // QuestionModule,
     ResponseModule,
     UserModule,
-    AuthModule,
+    // AuthModule,
   ],
   providers: [PrismaService],
 })

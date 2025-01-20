@@ -6,8 +6,11 @@ import axios from "axios";
 import ChatbotChat from "@/components/surveys/create/ChatbotChat";
 import Button from "@/components/common/Button/Button";
 import { Toaster, toaster } from "@/components/ui/toaster";
-import { useAuth } from "@/hooks/useAuth";
 import { Inter } from "next/font/google";
+import { FaCheckCircle, FaList, FaTextHeight, FaCalendarAlt, FaClock, FaHashtag, FaChartBar, FaChartPie, FaChartLine, FaTimes } from "react-icons/fa";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+
+import { useSession } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,11 +23,10 @@ interface SurveyResponse {
   }[];
 }
 
-const CreateSurveyPage: React.FC = () => {
+const CreateSurveyPage = () => {
   const [surveyData, setSurveyData] = useState<Survey | null>(null);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const { user, loading } = useAuth();
   const searchParams = useSearchParams();
   const isEdit = searchParams.get("edit") === "true";
   const surveyId = searchParams.get("id");
@@ -33,11 +35,8 @@ const CreateSurveyPage: React.FC = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      // Handle the case when user is not authenticated
-    }
-  }, [loading, user]);
+  const { data: session } = useSession();
+  const userId = session?.user?.id as string;
 
   useEffect(() => {
     if (isEdit && surveyId) {
@@ -81,12 +80,8 @@ const CreateSurveyPage: React.FC = () => {
     }
   }, [isEdit, surveyId, searchParams]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   async function createSurveyButtonClicked(): Promise<void> {
-    if (!user || !surveyData || !title || !description) {
+    if (!userId || !surveyData || !title || !description) {
       toaster.create({
         title: "설문 데이터가 없습니다.",
         description: "설문 제목과 설명을 입력해주세요.",
@@ -103,11 +98,11 @@ const CreateSurveyPage: React.FC = () => {
             title,
             description,
             price: Number(price),
-            userId: user.id,
+            userId: userId,
           })
         : await axios.post("http://localhost:3001/api/surveys", {
             ...surveyData,
-            userId: user.id,
+            userId: userId,
             title,
             price: Number(price),
             description,
@@ -236,8 +231,7 @@ const CreateSurveyPage: React.FC = () => {
       <Grid templateColumns="repeat(5, 1fr)" gap={3} className="fixed bottom-0 left-0 right-0 bg-[#f1f1f1] p-2">
         <GridItem colSpan={3}>
           <div className="justify-center">
-            <p className="text-gray-700 text-sm font-inter">설문지 생성자: {user ? user.email : "Loading..."}</p>
-            <p className="text-gray-700 text-sm font-inter">생성자 id: {user ? user.id : "Loading..."}</p>
+            <p className="text-gray-700 text-sm font-inter">생성자 id: {userId ? userId : "Loading..."}</p>
           </div>
         </GridItem>
         <GridItem colSpan={2}>
@@ -263,8 +257,6 @@ interface Survey {
     options: string[];
   }[];
 }
-import { FaCheckCircle, FaList, FaTextHeight, FaCalendarAlt, FaClock, FaHashtag, FaChartBar, FaChartPie, FaChartLine, FaTimes } from "react-icons/fa";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const PreviewSurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
   const questionTypeMap: { [key: string]: { label: string; icon: JSX.Element } } = {

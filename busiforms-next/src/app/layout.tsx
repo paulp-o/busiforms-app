@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Provider } from "@/components/ui/provider";
+import Providers from "@/components/providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,9 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${inter.variable}`} suppressHydrationWarning>
+    <html lang="ko" className={`${inter.variable}`} data-theme="nord" suppressHydrationWarning>
       <body className="font-inter antialiased">
-        <Provider>{children}</Provider>
+        <Providers>
+          <Provider>{children}</Provider>
+        </Providers>
       </body>
     </html>
   );

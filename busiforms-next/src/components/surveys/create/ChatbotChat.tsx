@@ -31,18 +31,19 @@ const ChatbotChat: React.FC<{
   const [currentSurvey, setCurrentSurvey] = useState<SurveyResponse | null>(givenPoll || null);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
 
-  useEffect(() => {
-    const message =
-      "나는 커스텀 케이크샵을 운영하고 있어.\n원데이클래스를 열어야하는데 참여자 정보, 클래스를 알게 된 경로, 뭘 배우고 싶고 뭘 만들고 싶은지를 알고싶어.";
-    navigator.clipboard
-      .writeText(message)
-      .then(() => {
-        console.log("Message copied to clipboard");
-      })
-      .catch((err) => {
-        console.error("Failed to copy message to clipboard: ", err);
-      });
-  }, []);
+  // 해커톤용 자동복사 스크립트
+  // useEffect(() => {
+  //   const message =
+  //     "나는 커스텀 케이크샵을 운영하고 있어.\n원데이클래스를 열어야하는데 참여자 정보, 클래스를 알게 된 경로, 뭘 배우고 싶고 뭘 만들고 싶은지를 알고싶어.";
+  //   navigator.clipboard
+  //     .writeText(message)
+  //     .then(() => {
+  //       console.log("Message copied to clipboard");
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to copy message to clipboard: ", err);
+  //     });
+  // }, []);
 
   const inferVisualizationType = async (question: { questionType: string; text: string; options?: string[] }) => {
     try {
