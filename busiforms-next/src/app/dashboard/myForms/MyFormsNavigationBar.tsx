@@ -12,7 +12,7 @@ const MyFormsNavigationBar = ({ userId }: { userId: string }) => {
         {/* <img alt="Logo" src="/logo.svg" className="w-4" /> */}
         {/* <h1 className=" text-gray-900 text-xl font-bold tracking-tight">나의 폼</h1> */}
         {/* 새 폼 버튼 */}
-        <Link href="/surveys/create" className="btn btn-primary btn-sm">
+        <Link href="/forms/create" className="btn btn-primary btn-sm">
           <IconPlus />새 폼 만들기
         </Link>
         {/* Search */}

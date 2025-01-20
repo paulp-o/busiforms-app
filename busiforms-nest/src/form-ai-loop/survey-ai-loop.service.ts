@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 
 @Injectable()
-export class SurveyAiLoopService {
+export class FormAiLoopService {
   async generatePoll(userInput?: string, givenPoll?: string) {
     // OpenAI에 보낼 ChatCompletion
     const openai = new OpenAI({
@@ -50,8 +50,8 @@ export class SurveyAiLoopService {
               ${givenPoll ? `Earlier Poll: ${givenPoll}` : ''}
 
               ### Important
-              - Try to preserve the original survey's content if given.
-              - If the given survey has ids, you should strictly preserve them. However, you shouldn't add ids to newly generated questions.
+              - Try to preserve the original form's content if given.
+              - If the given form has ids, you should strictly preserve them. However, you shouldn't add ids to newly generated questions.
 
               `,
               type: 'text',
@@ -150,7 +150,7 @@ export class SurveyAiLoopService {
           content: [
             {
               text: `
-              You are a data analyst. You are given a survey question and need to decide what type of visualization is suitable for the given question. choces are: bar_chart, pie_chart, histogram, word_cloud.
+              You are a data analyst. You are given a form question and need to decide what type of visualization is suitable for the given question. choces are: bar_chart, pie_chart, histogram, word_cloud.
               
               # Output Format
               
@@ -227,7 +227,7 @@ export class SurveyAiLoopService {
           content: [
             {
               text: `
-              You are a data analyst. You are given a survey question and need to generate a word cloud. Provide a list of 5-10 main keywords extracted from the responses to the given question.
+              You are a data analyst. You are given a form question and need to generate a word cloud. Provide a list of 5-10 main keywords extracted from the responses to the given question.
               
               # Output Format
               

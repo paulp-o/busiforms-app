@@ -11,7 +11,7 @@ interface Message {
   isBot: boolean;
 }
 
-interface SurveyResponse {
+interface FormResponse {
   questions: Array<{
     questionType: string;
     text: string;
@@ -21,14 +21,14 @@ interface SurveyResponse {
 }
 
 const ChatbotChat: React.FC<{
-  givenPoll?: SurveyResponse;
-  onSurveyUpdate: (data: SurveyResponse) => void;
+  givenPoll?: FormResponse;
+  onFormUpdate: (data: FormResponse) => void;
   onLoadingChange?: (loading: boolean) => void;
-}> = ({ givenPoll, onSurveyUpdate, onLoadingChange }) => {
+}> = ({ givenPoll, onFormUpdate, onLoadingChange }) => {
   const [messages, setMessages] = useState<Message[]>([{ content: "설문지 작성을 도와드리겠습니다. 어떤 설문지를 만들고 싶으신가요?", isBot: true }]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentSurvey, setCurrentSurvey] = useState<SurveyResponse | null>(givenPoll || null);
+  const [currentForm, setCurrentForm] = useState<FormResponse | null>(givenPoll || null);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
 
   // 해커톤용 자동복사 스크립트
@@ -47,7 +47,7 @@ const ChatbotChat: React.FC<{
 
   const inferVisualizationType = async (question: { questionType: string; text: string; options?: string[] }) => {
     try {
-      const response = await fetch("http://localhost:3001/api/survey-ai-loop/inferVisualizationType", {
+      const response = await fetch("http://localhost:3001/api/form-ai-loop/inferVisualizationType", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: JSON.stringify(question) }),
@@ -70,12 +70,12 @@ const ChatbotChat: React.FC<{
     setMessages((prev) => [...prev, { content: fullMessage, isBot: false }]);
 
     try {
-      const response = await fetch("http://localhost:3001/api/survey-ai-loop", {
+      const response = await fetch("http://localhost:3001/api/form-ai-loop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           input: fullMessage,
-          givenPoll: currentSurvey ? JSON.stringify(currentSurvey.questions) : "",
+          givenPoll: currentForm ? JSON.stringify(currentForm.questions) : "",
         }),
       });
 
@@ -88,8 +88,8 @@ const ChatbotChat: React.FC<{
           visualizationType: undefined,
         })),
       };
-      setCurrentSurvey(initialData);
-      onSurveyUpdate(initialData);
+      setCurrentForm(initialData);
+      onFormUpdate(initialData);
 
       // Stop showing the loading spinner for the entire preview
       setIsLoading(false);
@@ -99,20 +99,20 @@ const ChatbotChat: React.FC<{
       for (const [index, question] of data.questions.entries()) {
         const visualizationType = await inferVisualizationType(question);
         if (visualizationType !== null) {
-          setCurrentSurvey((prevSurvey: SurveyResponse | null) => {
-            if (!prevSurvey) return null;
-            const updatedQuestions = [...prevSurvey.questions];
+          setCurrentForm((prevForm: FormResponse | null) => {
+            if (!prevForm) return null;
+            const updatedQuestions = [...prevForm.questions];
             updatedQuestions[index].visualizationType = visualizationType;
-            const updatedSurvey: SurveyResponse = { ...prevSurvey, questions: updatedQuestions };
-            onSurveyUpdate(updatedSurvey);
-            return updatedSurvey;
+            const updatedForm: FormResponse = { ...prevForm, questions: updatedQuestions };
+            onFormUpdate(updatedForm);
+            return updatedForm;
           });
         }
         await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
       }
 
-      // Customize message based on whether it's a modification or new survey
-      const responseMessage = currentSurvey
+      // Customize message based on whether it's a modification or new form
+      const responseMessage = currentForm
         ? `설문지가 수정되었습니다. 추가로 수정하실 내용이 있으신가요?`
         : `새로운 설문지가 생성되었습니다. 수정하실 내용이 있으신가요?`;
       setMessages((prev) => [...prev, { content: responseMessage, isBot: true }]);

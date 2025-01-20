@@ -7,14 +7,14 @@ export class ResponseController {
 
   @Post()
   async createResponse(
-    @Body('surveyId') surveyId: string,
+    @Body('formId') formId: string,
     @Body('answers') answers: any,
   ) {
-    return this.responseService.createResponse(surveyId, answers);
+    return this.responseService.createResponse(formId, answers);
   }
 
-  @Get(':surveyId')
-  async getResponses(@Param('surveyId') surveyId: string) {
-    return this.responseService.getResponsesBySurvey(surveyId);
+  @Get(':formId')
+  async getResponses(@Param('formId') formId: string) {
+    return this.responseService.getResponsesByForm(formId);
   }
 }

@@ -23,14 +23,18 @@ const Layout: React.FC<{ children: ReactNode }> = async ({ children }) => {
           </div>
         </Link>
         {/* <Image alt="Profile" src={session.user?.image || } width={128} height={128} className="rounded-full" /> */}
-        <div className="avatar">
-          <div className="w-32 rounded-full">{session.user?.image ? <img src={session.user?.image} /> : <span className="text-3xl">D</span>}</div>
-        </div>
-        <h2 className="font-bold text-lg">User name</h2>
-        <span className="text-sm text-accent">username@email.com</span>
+
+        {/* <span className="text-sm text-accent">username@email.com</span> */}
         <LayoutMenu />
-        {/* footer */}
-        <div className="flex justify-center">
+        {/* SECTION footer */}
+        <div className="flex-row justify-center pt-5 border-primary/30 border-t">
+          {/* show logged in user info */}
+          <div className="flex items-center space-x-4 justify-center mb-4">
+            <div className="avatar">
+              <div className="w-8 rounded-full">{session.user?.image ? <img src={session.user?.image} /> : <span className="text-3xl">D</span>}</div>
+            </div>
+            <h2 className="text-md">{session.user?.name} 님</h2>
+          </div>
           {/* logout button */}
           <form
             action={async () => {

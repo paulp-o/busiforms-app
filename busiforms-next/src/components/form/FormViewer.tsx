@@ -18,7 +18,7 @@ interface Question {
   options?: string[];
 }
 
-interface Survey {
+interface Form {
   id: string;
   title: string;
   description: string;
@@ -56,10 +56,10 @@ const createValidationSchema = (questions: Question[]) => {
   return z.object(schemaObject);
 };
 
-const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
+const FormViewer: React.FC<{ form: Form }> = ({ form }) => {
   const router = useRouter();
-  const validationSchema = createValidationSchema(survey.questions);
-  const [isPaid, setIsPaid] = useState(survey.price === 0);
+  const validationSchema = createValidationSchema(form.questions);
+  const [isPaid, setIsPaid] = useState(form.price === 0);
 
   const {
     control,
@@ -71,12 +71,12 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
   const onSubmit = async (data: Record<string, z.ZodTypeAny>) => {
     try {
       const response = await axios.post("http://localhost:3001/api/responses", {
-        surveyId: survey.id,
+        formId: form.id,
         answers: data,
       });
       console.log("Response from server:", response.data);
       // Redirect to completion page
-      router.push(`/surveys/${survey.id}/complete`);
+      router.push(`/forms/${form.id}/complete`);
     } catch (error) {
       console.error("Error submitting data:", error);
       // You might want to show an error message to the user here
@@ -96,7 +96,7 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {survey.questions.map((question) => (
+      {form.questions.map((question) => (
         <div key={question.id} className="flex flex-col space-y-2">
           <label className="font-medium text-gray-900">{question.text}</label>
           <Controller
@@ -185,9 +185,9 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
           {errors[question.id] && <span className="text-red-500 text-sm">{errors[question.id]?.message?.toString()}</span>}
         </div>
       ))}
-      {survey.price > 0 && !isPaid && (
+      {form.price > 0 && !isPaid && (
         <>
-          <p className="text-red-500">이 설문조사는 {survey.price}원을 결제해야 제출할 수 있습니다!</p>
+          <p className="text-red-500">이 설문조사는 {form.price}원을 결제해야 제출할 수 있습니다!</p>
           <div className="flex justify-center">
             <Button
               type="button"
@@ -205,7 +205,7 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full max-w-md"
           onSubmit={handleSubmit(onSubmit)}
-          disabled={!isPaid && survey.price > 0}
+          disabled={!isPaid && form.price > 0}
         >
           제출하기!
         </Button>
@@ -214,4 +214,4 @@ const SurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
   );
 };
 
-export default SurveyForm;
+export default FormViewer;

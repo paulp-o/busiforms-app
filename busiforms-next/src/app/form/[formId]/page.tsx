@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 // import { Spinner } from "@chakra-ui/react";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import SurveyForm from "@/components/survey/SurveyForm"; // Import the SurveyForm component
+import FormViewer from "@/components/form/FormViewer"; // Import the FormViewer component
 
 // TypeScript Interfaces
 type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime" | "long_text";
@@ -16,7 +16,7 @@ interface Question {
   options?: string[];
 }
 
-interface Survey {
+interface Form {
   id: string;
   title: string;
   description: string;
@@ -24,37 +24,37 @@ interface Survey {
   price: number;
 }
 
-// Fetch Survey Data from Server
-const fetchSurvey = async (surveyId: string): Promise<Survey> => {
-  const response = await axios.get(`http://localhost:3001/api/surveys/${surveyId}`);
+// Fetch Form Data from Server
+const fetchForm = async (formId: string): Promise<Form> => {
+  const response = await axios.get(`http://localhost:3001/api/forms/${formId}`);
   return response.data;
 };
 
-const SurveyPage: React.FC = () => {
-  const { surveyId } = useParams() as { surveyId: string };
+const FormPage: React.FC = () => {
+  const { formId } = useParams() as { formId: string };
 
-  const [survey, setSurvey] = useState<Survey | null>(null);
+  const [form, setForm] = useState<Form | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!surveyId) {
+    if (!formId) {
       setLoading(false);
       return;
     }
 
-    const loadSurvey = async () => {
+    const loadForm = async () => {
       try {
-        const data = await fetchSurvey(surveyId);
-        setSurvey(data);
+        const data = await fetchForm(formId);
+        setForm(data);
       } catch (error) {
-        console.error("Error fetching survey:", error);
+        console.error("Error fetching form:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadSurvey();
-  }, [surveyId]);
+    loadForm();
+  }, [formId]);
 
   if (loading) {
     return (
@@ -64,21 +64,21 @@ const SurveyPage: React.FC = () => {
     );
   }
 
-  if (!survey) {
+  if (!form) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p>Error loading survey</p>
+        <p>Error loading form</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded-md shadow-md">
-      <h1 className="text-3xl font-bold mb-4">{survey.title}</h1>
-      <p className="text-gray-700 mb-6">{survey.description}</p>
-      <SurveyForm survey={survey} />
+      <h1 className="text-3xl font-bold mb-4">{form.title}</h1>
+      <p className="text-gray-700 mb-6">{form.description}</p>
+      <FormViewer form={form} />
     </div>
   );
 };
 
-export default SurveyPage;
+export default FormPage;

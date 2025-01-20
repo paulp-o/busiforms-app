@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Grid, GridItem, Input } from "@chakra-ui/react";
 import axios from "axios";
-import ChatbotChat from "@/components/surveys/create/ChatbotChat";
+import ChatbotChat from "@/components/forms/create/ChatbotChat";
 import Button from "@/components/common/Button/Button";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { Inter } from "next/font/google";
@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
-interface SurveyResponse {
+interface FormResponse {
   questions: {
     text: string;
     questionType: string;
@@ -23,13 +23,13 @@ interface SurveyResponse {
   }[];
 }
 
-const CreateSurveyPage = () => {
-  const [surveyData, setSurveyData] = useState<Survey | null>(null);
+const CreateFormPage = () => {
+  const [formData, setFormData] = useState<Form | null>(null);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const searchParams = useSearchParams();
   const isEdit = searchParams.get("edit") === "true";
-  const surveyId = searchParams.get("id");
+  const formId = searchParams.get("id");
   const [isChatbotLoading, setIsChatbotLoading] = useState(false);
   const [price, setPrice] = useState<string>("0");
 
@@ -39,17 +39,17 @@ const CreateSurveyPage = () => {
   const userId = session?.user?.id as string;
 
   useEffect(() => {
-    if (isEdit && surveyId) {
+    if (isEdit && formId) {
       const title = searchParams.get("title") || "";
       const description = searchParams.get("description") || "";
       setTitle(title);
       setDescription(description);
-      // Fetch the survey data if needed
-      axios.get(`http://localhost:3001/api/surveys/${surveyId}`).then((response) => {
+      // Fetch the form data if needed
+      axios.get(`http://localhost:3001/api/forms/${formId}`).then((response) => {
         // when fetched, remove the 'id, userId, title, description, createdAt, updatedAt' fields from the response
-        // Also remove 'visualizationType, surveyId, createdAt' from each question
-        const newSurveyData = response.data;
-        newSurveyData.questions = response.data.questions.map(
+        // Also remove 'visualizationType, formId, createdAt' from each question
+        const newFormData = response.data;
+        newFormData.questions = response.data.questions.map(
           (question: {
             id?: string;
             userId?: string;
@@ -75,13 +75,13 @@ const CreateSurveyPage = () => {
             return question;
           }
         );
-        setSurveyData(newSurveyData);
+        setFormData(newFormData);
       });
     }
-  }, [isEdit, surveyId, searchParams]);
+  }, [isEdit, formId, searchParams]);
 
-  async function createSurveyButtonClicked(): Promise<void> {
-    if (!userId || !surveyData || !title || !description) {
+  async function createFormButtonClicked(): Promise<void> {
+    if (!userId || !formData || !title || !description) {
       toaster.create({
         title: "설문 데이터가 없습니다.",
         description: "설문 제목과 설명을 입력해주세요.",
@@ -93,15 +93,15 @@ const CreateSurveyPage = () => {
     try {
       console.log("price is", price);
       const response = isEdit
-        ? await axios.put(`http://localhost:3001/api/surveys/${surveyId}`, {
-            ...surveyData,
+        ? await axios.put(`http://localhost:3001/api/forms/${formId}`, {
+            ...formData,
             title,
             description,
             price: Number(price),
             userId: userId,
           })
-        : await axios.post("http://localhost:3001/api/surveys", {
-            ...surveyData,
+        : await axios.post("http://localhost:3001/api/forms", {
+            ...formData,
             userId: userId,
             title,
             price: Number(price),
@@ -109,7 +109,7 @@ const CreateSurveyPage = () => {
           });
 
       if (response.status !== 200 && response.status !== 201) {
-        throw new Error("Failed to create survey");
+        throw new Error("Failed to create form");
       }
       toaster.create({
         title: isEdit ? "설문이 성공적으로 수정되었습니다." : "설문이 성공적으로 생성되었습니다.",
@@ -194,11 +194,7 @@ const CreateSurveyPage = () => {
             <div className="bg-white p-3 rounded-lg">
               <h1 className="text-xl font-bold font-inter">실시간 미리보기</h1>
               <div className="mt-3 p-3 bg-gray-100 rounded overflow-auto relative" style={{ height: "calc(70vh)" }}>
-                {surveyData ? (
-                  <PreviewSurveyForm survey={surveyData} />
-                ) : (
-                  <p className="text-gray-500 font-inter">설문 데이터가 여기에 표시됩니다.</p>
-                )}
+                {formData ? <PreviewFormViewer form={formData} /> : <p className="text-gray-500 font-inter">설문 데이터가 여기에 표시됩니다.</p>}
               </div>
               {isChatbotLoading && (
                 <div className="absolute inset-0 flex items-center justify-center" style={{ height: "calc(70vh)" }}>
@@ -209,18 +205,18 @@ const CreateSurveyPage = () => {
           </GridItem>
           <GridItem colSpan={2}>
             <div className="bg-white p-3 rounded-lg" style={{ height: "calc(70vh)" }}>
-              <h1 className="text-xl font-bold font-inter">Create Survey</h1>
+              <h1 className="text-xl font-bold font-inter">Create Form</h1>
               <ChatbotChat
-                givenPoll={surveyData || undefined}
-                onSurveyUpdate={(data: SurveyResponse) => {
-                  const formattedData: Survey = {
+                givenPoll={formData || undefined}
+                onFormUpdate={(data: FormResponse) => {
+                  const formattedData: Form = {
                     questions: data.questions.map((question) => ({
                       ...question,
                       options: question.options || [],
                       visualizationType: question.visualizationType || "",
                     })),
                   };
-                  setSurveyData(formattedData);
+                  setFormData(formattedData);
                 }}
                 onLoadingChange={setIsChatbotLoading}
               />
@@ -237,7 +233,7 @@ const CreateSurveyPage = () => {
         <GridItem colSpan={2}>
           <div className="flex justify-center">
             <Button
-              onClick={() => createSurveyButtonClicked()}
+              onClick={() => createFormButtonClicked()}
               className="font-inter bg-[#3953D5] hover:bg-[#3953D5]/90 text-white px-6 py-2 rounded-lg transition-all duration-200"
             >
               {isEdit ? "설문지 수정하기!" : "설문지 업로드하기!"}
@@ -249,7 +245,7 @@ const CreateSurveyPage = () => {
   );
 };
 
-interface Survey {
+interface Form {
   questions: {
     visualizationType: string;
     text: string;
@@ -258,7 +254,7 @@ interface Survey {
   }[];
 }
 
-const PreviewSurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
+const PreviewFormViewer: React.FC<{ form: Form }> = ({ form }) => {
   const questionTypeMap: { [key: string]: { label: string; icon: JSX.Element } } = {
     radio: { label: "1개 선택", icon: <FaCheckCircle /> },
     checkbox: { label: "여러 개 선택", icon: <FaCheckCircle /> },
@@ -290,7 +286,7 @@ const PreviewSurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
 
   return (
     <div className="space-y-4 max-w-3xl mx-auto overflow-auto font-inter">
-      {survey.questions.map(
+      {form.questions.map(
         (
           question: {
             visualizationType: string;
@@ -349,4 +345,4 @@ const PreviewSurveyForm: React.FC<{ survey: Survey }> = ({ survey }) => {
   );
 };
 
-export default CreateSurveyPage;
+export default CreateFormPage;

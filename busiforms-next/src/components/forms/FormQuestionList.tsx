@@ -2,13 +2,13 @@
 // import { useForm, Controller } from "react-hook-form";
 // import { zodResolver } from "@hookform/resolvers/zod";
 // import * as z from "zod";
-// import { Question, Survey } from "@prisma/client";
+// import { Question, Form } from "@prisma/client";
 
 // // TypeScript Interfaces
 // type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime";
 
-// interface SurveyQuestionListProps {
-//   surveyData: Survey | null;
+// interface FormQuestionListProps {
+//   formData: Form | null;
 //   onSubmit: (data: Record<string, z.ZodTypeAny>) => void;
 // }
 
@@ -42,10 +42,10 @@
 //   return z.object(schemaObject);
 // };
 
-// const SurveyQuestionList: React.FC<SurveyQuestionListProps> = ({ surveyData, onSubmit }) => {
+// const FormQuestionList: React.FC<FormQuestionListProps> = ({ formData, onSubmit }) => {
 //   let questions: Question[] = [];
-//   if (surveyData) {
-//     questions = surveyData.
+//   if (formData) {
+//     questions = formData.
 //   }
 //   const validationSchema = createValidationSchema(questions);
 
@@ -146,4 +146,4 @@
 //   );
 // };
 
-// export default SurveyQuestionList;
+// export default FormQuestionList;

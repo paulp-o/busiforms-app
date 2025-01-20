@@ -6,7 +6,7 @@
 //   options?: string[];
 // }
 
-// interface Survey {
+// interface Form {
 //   id: string;
 //   title: string;
 //   description: string;
@@ -15,4 +15,4 @@
 
 // type QuestionType = "text" | "radio" | "number" | "checkbox" | "dropdown" | "date" | "time" | "datetime";
 
-// export { Question, Survey, QuestionType };
+// export { Question, Form, QuestionType };

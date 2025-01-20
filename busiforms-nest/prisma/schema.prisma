@@ -9,16 +9,16 @@ generator client {
 
 model User {
   id        String    @id @unique
-  email     String    
-  name      String? @default("user")
-  accountProvider String
+  name     String  @default("")
+  nickname String  @default("")
   role      Role    @default(user)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  surveys   Survey[]
+  phone     String?
+  forms   Form[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Survey {
+model Form {
   id          String      @id @default(cuid())
   title       String
   description String?
@@ -39,8 +39,8 @@ model Question {
   optional          Boolean  @default(false)
   options   String[] // 선택지
   visualizationType VisualizationType?
-  survey    Survey?  @relation(fields: [surveyId], references: [id], onDelete: SetNull)
-  surveyId  String?
+  form    Form?  @relation(fields: [formId], references: [id], onDelete: SetNull)
+  formId  String?
   createdAt DateTime @default(now())
 }
 
@@ -66,8 +66,8 @@ enum VisualizationType {
 
 model Response {
   id        String   @id @default(cuid())
-  survey    Survey?  @relation(fields: [surveyId], references: [id], onDelete: SetNull)
-  surveyId  String?
+  form    Form?  @relation(fields: [formId], references: [id], onDelete: SetNull)
+  formId  String?
   answers   Json     // PostgreSQL JSON
   createdAt DateTime @default(now())
 }

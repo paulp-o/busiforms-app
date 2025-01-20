@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Role } from '@prisma/client';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('api/users')
 export class UserController {
@@ -10,13 +11,18 @@ export class UserController {
   @Post('signIn')
   async signIn(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.signInUser(
-      createUserDto.email,
       createUserDto.userId,
-      createUserDto.name,
-      createUserDto.accountProvider,
       createUserDto.role as Role,
     );
     return user;
+  }
+
+  @Patch(':id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.updateUser(id, updateUserDto);
   }
 
   @Get(':id')

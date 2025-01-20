@@ -1,6 +1,6 @@
 import React from "react";
 
-const SurveyStatsPage = () => {
+const FormStatsPage = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold">Hello World</h1>
@@ -8,4 +8,4 @@ const SurveyStatsPage = () => {
   );
 };
 
-export default SurveyStatsPage;
+export default FormStatsPage;

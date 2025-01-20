@@ -7,15 +7,15 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { SurveyService } from './survey.service';
+import { FormService } from './form.service';
 import { QuestionType, VisualizationType } from '@prisma/client';
 
-@Controller('api/surveys')
-export class SurveyController {
-  constructor(private readonly surveyService: SurveyService) {}
+@Controller('api/forms')
+export class FormController {
+  constructor(private readonly formService: FormService) {}
 
   @Post()
-  async createSurvey(
+  async createForm(
     @Body('userId') userId: string,
     @Body('title') title: string,
     @Body('description') description?: string,
@@ -28,7 +28,7 @@ export class SurveyController {
       visualizationType?: VisualizationType;
     }[],
   ) {
-    return this.surveyService.createSurvey(
+    return this.formService.createForm(
       userId,
       title,
       description,
@@ -38,22 +38,22 @@ export class SurveyController {
   }
 
   @Get()
-  async getAllSurveys() {
-    return this.surveyService.getAllSurveys();
+  async getAllForms() {
+    return this.formService.getAllForms();
   }
 
   @Get('by-user/:userId')
-  async getSurveysByUser(@Param('userId') userId: string) {
-    return this.surveyService.getSurveysByUser(userId);
+  async getFormsByUser(@Param('userId') userId: string) {
+    return this.formService.getFormsByUser(userId);
   }
 
   @Get(':id')
-  async getSurvey(@Param('id') id: string) {
-    return this.surveyService.getSurveyById(id);
+  async getForm(@Param('id') id: string) {
+    return this.formService.getFormById(id);
   }
 
   @Put(':id')
-  async updateSurvey(
+  async updateForm(
     @Param('id') id: string,
     @Body('price') price?: number,
     @Body('title') title?: string,
@@ -67,7 +67,7 @@ export class SurveyController {
       visualizationType?: VisualizationType;
     }[],
   ) {
-    return this.surveyService.updateSurvey(
+    return this.formService.updateForm(
       id,
       title,
       price,
@@ -77,7 +77,7 @@ export class SurveyController {
   }
 
   @Delete(':id')
-  async deleteSurvey(@Param('id') id: string) {
-    return this.surveyService.deleteSurvey(id);
+  async deleteForm(@Param('id') id: string) {
+    return this.formService.deleteForm(id);
   }
 }

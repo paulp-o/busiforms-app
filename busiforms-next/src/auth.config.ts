@@ -9,6 +9,7 @@ export default {
     //  Naver,
     //  Kakao,
   ],
+
   callbacks: {
     authorized: async ({ auth }) => {
       // Logged in users are authenticated, otherwise redirect to login page
@@ -29,11 +30,12 @@ export default {
       }
       return token;
     },
-    session({ session, token }) {
+    session({ session, token, user }) {
       console.log("== Session Callbacks ==");
       console.log("SESSION", session);
       console.log("TOKEN", token);
       session.user.id = token.id as string;
+
       return session;
     },
     async signIn({ user, account, profile, credentials, email }) {
@@ -43,6 +45,8 @@ export default {
       console.log("PROFILE", profile);
       console.log("CREDENTIALS", credentials); // dont work
       console.log("EMAIL", email); // dont work
+      // save email verification status
+
       try {
         await axios.post("http://localhost:3001/api/users/signIn", {
           email: user.email,
@@ -56,6 +60,12 @@ export default {
         console.error("Error signing in", error);
         return false;
       }
+    },
+  },
+  events: {
+    createUser: async (message: any) => {
+      console.log("== Events ==");
+      console.log("CREATE USER", message);
     },
   },
 } satisfies NextAuthConfig;

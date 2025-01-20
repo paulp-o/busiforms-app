@@ -5,18 +5,18 @@ import { PrismaService } from '../common/prisma.service';
 export class ResponseService {
   constructor(private prisma: PrismaService) {}
 
-  async createResponse(surveyId: string, answers: any) {
+  async createResponse(formId: string, answers: any) {
     return this.prisma.response.create({
       data: {
-        surveyId,
+        formId,
         answers,
       },
     });
   }
 
-  async getResponsesBySurvey(surveyId: string) {
+  async getResponsesByForm(formId: string) {
     return this.prisma.response.findMany({
-      where: { surveyId },
+      where: { formId },
     });
   }
 }

@@ -4,7 +4,7 @@ import { PrismaService } from '../common/prisma.service';
 import { QuestionType, VisualizationType } from '@prisma/client';
 
 @Injectable()
-export class SurveyService {
+export class FormService {
   constructor(private prisma: PrismaService) {}
 
   private validatePrice(price?: number) {
@@ -14,7 +14,7 @@ export class SurveyService {
   }
 
   // 설문 + 질문 동시 생성
-  async createSurvey(
+  async createForm(
     userId: string,
     title: string,
     description?: string,
@@ -27,7 +27,7 @@ export class SurveyService {
     }[],
   ) {
     this.validatePrice(price);
-    return this.prisma.survey.create({
+    return this.prisma.form.create({
       data: {
         userId,
         title,
@@ -50,28 +50,28 @@ export class SurveyService {
   }
 
   // 설문 전체 조회
-  async getAllSurveys() {
-    return this.prisma.survey.findMany();
+  async getAllForms() {
+    return this.prisma.form.findMany();
   }
 
   // 특정 사용자 설문 조회
-  async getSurveysByUser(userId: string) {
-    return this.prisma.survey.findMany({
+  async getFormsByUser(userId: string) {
+    return this.prisma.form.findMany({
       where: { userId },
       include: { questions: true },
     });
   }
 
   // 특정 설문 조회
-  async getSurveyById(id: string) {
-    return this.prisma.survey.findUnique({
+  async getFormById(id: string) {
+    return this.prisma.form.findUnique({
       where: { id },
       include: { questions: true },
     });
   }
 
   // 설문 수정 (questions까지 같이 수정하고 싶다면 nested update 사용)
-  async updateSurvey(
+  async updateForm(
     id: string,
     title?: string,
     price?: number,
@@ -85,7 +85,7 @@ export class SurveyService {
     }[],
   ) {
     this.validatePrice(price);
-    return this.prisma.survey.update({
+    return this.prisma.form.update({
       where: { id },
       data: {
         title,
@@ -110,11 +110,11 @@ export class SurveyService {
   }
 
   // 설문 삭제
-  async deleteSurvey(id: string) {
+  async deleteForm(id: string) {
     await this.prisma.question.deleteMany({
-      where: { surveyId: id },
+      where: { formId: id },
     });
-    return this.prisma.survey.delete({
+    return this.prisma.form.delete({
       where: { id },
     });
   }

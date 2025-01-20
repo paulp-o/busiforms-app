@@ -1,18 +1,18 @@
 "use client";
 
 import { IconRefresh } from "@tabler/icons-react";
-import { fetchSurveys, getSurveysQueryKey } from "../queries";
+import { fetchForms, getFormsQueryKey } from "../queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 export default function RefreshMyFormsButtonComponent({ userId }: { userId: string }) {
   const {
-    data: surveys,
+    data: forms,
     isLoading,
     isError,
     refetch,
   } = useSuspenseQuery({
-    queryKey: getSurveysQueryKey(userId),
-    queryFn: () => fetchSurveys(userId),
+    queryKey: getFormsQueryKey(userId),
+    queryFn: () => fetchForms(userId),
   });
   return (
     <button className="btn btn-sm btn-primary btn-outline" onClick={() => refetch()} disabled={isLoading}>
